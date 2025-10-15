@@ -1,21 +1,9 @@
 import { ProjectTable } from "./ProjectTable"
 
 const projectData = [
-  {
-    title: "Frontend Dashboard",
-    subtitle: "React + Tailwind",
-    description: "Menampilkan metrik performa projek dan status deployment.",
-  },
-  {
-    title: "API Service",
-    subtitle: "Node.js + Express",
-    description: "Backend untuk autentikasi dan CRUD data pengguna.",
-  },
-  {
-    title: "Database Migration",
-    subtitle: "PostgreSQL",
-    description: "Menyusun ulang struktur tabel untuk optimisasi query.",
-  },
+    { title: "Project Alpha", content: "Analyzing data pipeline", status: "ongoing" },
+    { title: "Project Beta", content: "Deployment failed", status: "failed" },
+    { title: "Project Gamma", content: "Completed successfully", status: "success" },
 ]
 
 export default function Tes() {

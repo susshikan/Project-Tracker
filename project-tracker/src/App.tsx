@@ -1,12 +1,13 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { ChartProject } from "./components/dashboard/ChartProject"
+import { Tes } from "./components/dashboard/Tes"
 
 function App() {
   
 
   return (
-    <h1 className="text-3xl font-bold text-gray-800">Hello Tailwind + Vite!</h1>
+    <div className="max-h-[500px] w-[500px]">
+      <Tes />
+    </div>
   )
 }
 

@@ -2,14 +2,7 @@ import { AddButton } from "./AddButton";
 import type { Project } from "./TableCard";
 import TableCard from "./TableCard";
 //flex items-center justify-center min-h-screen bg-background p-4 flex-col
-export default function ProjectListPage(){
-    return(
-        <div className=" bg-white">
-            <AddButton />
-            <TableCard projects={demoProjects}/>
-        </div>
-    )
-}
+ 
 
 export const demoProjects: Project[] = [
   { id: "1", name: "Landing Page Revamp", tags: ["frontend", "tailwind", "a11y"] },

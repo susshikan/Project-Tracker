@@ -11,7 +11,7 @@ export type Project = {
 
 export default function TableCard({ projects }: { projects: Project[] }) {
   return (
-    <main className="flex items-center justify-center min-h-screen bg-background p-4">
+    <main className="flex min-h-screen bg-background p-4 pt-3">
       <div className="w-full max-w-6xl">
         <div className="grid grid-cols-5 gap-4">
           {projects.map((project, key) => {
@@ -26,7 +26,7 @@ export default function TableCard({ projects }: { projects: Project[] }) {
     </main>
   )
 }
-
+//items-center
 export const demoProjects: Project[] = [
   { id: "1", name: "Landing Page Revamp", tags: ["frontend", "tailwind", "a11y"] },
   { id: "2", name: "API Gateway", tags: ["backend", "node", "auth"] },

@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { CheckCircle, Circle, Clock } from "lucide-react"
+import { string } from "zod"
 
 const steps = [
   {
@@ -32,6 +33,12 @@ const steps = [
   },
 ]
 
+interface Step {
+  title: string
+  project: string
+  date: string
+}
+
 export default function VerticalActivityStepper() {
   return (
     <Card className="w-full max-w-md mx-auto border rounded-2xl p-6">
@@ -44,14 +51,8 @@ export default function VerticalActivityStepper() {
         <div className="flex flex-col space-y-8">
           {steps.map((step, index) => {
             const isLast = index === steps.length - 1
-            const icon =
-              step.status === "done" ? (
-                <CheckCircle className="w-5 h-5 text-green-500" />
-              ) : step.status === "in-progress" ? (
-                <Clock className="w-5 h-5 text-yellow-500 animate-pulse" />
-              ) : (
-                <Circle className="w-5 h-5 text-muted-foreground" />
-              )
+            const icon = <Circle className="w-5 h-5 text-muted-foreground" />
+              
 
             return (
               <div key={index} className="relative flex items-start gap-4">
@@ -63,23 +64,10 @@ export default function VerticalActivityStepper() {
                 {/* Step content */}
                 <div className="flex-1 space-y-1">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-medium">{step.title}</h3>
-                    <Badge
-                      variant={
-                        step.status === "done"
-                          ? "secondary"
-                          : step.status === "in-progress"
-                          ? "outline"
-                          : "default"
-                      }
-                      className="text-xs"
-                    >
-                      {step.status}
-                    </Badge>
+                    <h3 className="font-medium">{step.description}</h3>
+                    
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    {step.description}
-                  </p>
+                  
                   <p className="text-xs text-muted-foreground">{step.date}</p>
                   {!isLast && <Separator className="mt-4 opacity-20" />}
                 </div>

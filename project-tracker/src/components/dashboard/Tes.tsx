@@ -5,6 +5,9 @@ import Dummy from "./VerticalActivityStepper"
 import FloatingNavbar from "../navbar/FloatingNavbar"
 import Title from "../navbar/Title"
 import Navbar from "../navbar/Navbar"
+import TableCard from "../ProjectListPage/tableCard"
+import type { Project } from "../ProjectListPage/tableCard"
+import { CardProject } from "../ProjectListPage/Card"
 
 const data = [
   {
@@ -33,6 +36,15 @@ const data = [
 
 export default function Tes() {
     return (
-        <Dashboard />
+        <TableCard projects={demoProjects} />
     )
 }
+
+export const demoProjects: Project[] = [
+  { id: "1", name: "Landing Page Revamp", tags: ["frontend", "tailwind", "a11y"] },
+  { id: "2", name: "API Gateway", tags: ["backend", "node", "auth"] },
+  { id: "3", name: "Mobile App", tags: ["react-native", "offline", "perf"] },
+  { id: "4", name: "Analytics Dashboard", tags: ["dashboard", "charts", "etl"] },
+  { id: "5", name: "Search Service", tags: ["elasticsearch", "indexing", "ops"] },
+  { id: "6", name: "Notification System", tags: ["queue", "workers", "retry"] },
+]

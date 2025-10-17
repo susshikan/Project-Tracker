@@ -25,7 +25,7 @@ export function AddButton() {
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Edit profile</DialogTitle>
+            <DialogTitle>Add New Project</DialogTitle>
             <DialogDescription>
               Make changes to your profile here. Click save when you&apos;re
               done.

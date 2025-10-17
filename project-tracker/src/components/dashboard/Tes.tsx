@@ -1,7 +1,8 @@
 import { ProjectTable } from "./ProjectTable"
-import ActivityTable from "./activityTable"
+
 import Dashboard from "./Dashboard"
 import Dummy from "./VerticalActivityStepper"
+import FloatingNavbar from "../FloatingNavbar"
 
 const data = [
   {
@@ -30,6 +31,6 @@ const data = [
 
 export default function Tes() {
     return (
-        <Dashboard />
+        <FloatingNavbar />
     )
 }

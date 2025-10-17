@@ -11,13 +11,17 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { CardTitle } from "../ui/card"
+import { CirclePlus } from "lucide-react"
 
 export function AddButton() {
   return (
     <Dialog>
       <form>
         <DialogTrigger asChild>
-          <Button className="aspect-square flex flex-col">Open Dialog</Button>
+              <Button variant="outline" size="icon">
+                  <CirclePlus />
+              </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>

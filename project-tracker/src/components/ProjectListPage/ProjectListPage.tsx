@@ -1,10 +1,13 @@
 import { AddButton } from "./AddButton";
 import type { Project } from "./TableCard";
 import TableCard from "./TableCard";
+import Navbar from "../navbar/Navbar";
 //flex items-center justify-center min-h-screen bg-background p-4 flex-col
  
 export default function ProjectListPage(){ 
-    return( 
+    return(
+        <div>
+            <Navbar />
         <div className="flex items-center justify-center min-h-screen bg-background"> 
         <div className="w-full max-w-6xl p-4"> 
             <div className="pl-4"> 
@@ -13,6 +16,7 @@ export default function ProjectListPage(){
             <TableCard projects={demoProjects}/> 
         </div> 
         </div> 
+        </div>
     ) 
 }
 

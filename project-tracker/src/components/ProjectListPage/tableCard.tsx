@@ -9,9 +9,9 @@ export type Project = {
   tags: string[]
 }
 
-export default function ProjectGrid({ projects }: { projects: Project[] }) {
+export default function TableCard({ projects }: { projects: Project[] }) {
   return (
-        <main className="flex items-center justify-center min-h-screen bg-background p-4">
+    <main className="flex items-center justify-center min-h-screen bg-background p-4">
       <div className="w-full max-w-6xl">
         <div className="grid grid-cols-5 gap-4">
           {projects.map((project, key) => {

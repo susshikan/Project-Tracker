@@ -9,6 +9,8 @@ import Navbar from "../navbar/Navbar"
 import { CardProject } from "../ProjectListPage/Card"
 import ProjectListPage from "../ProjectListPage/ProjectListPage"
 
+import SettingsPage from "../Settings/SettingsPage"
+
 const data = [
   {
     id: 1,
@@ -36,7 +38,7 @@ const data = [
 
 export default function Tes() {
     return (
-        <ProjectListPage />
+       <SettingsPage />
     )
 }
 

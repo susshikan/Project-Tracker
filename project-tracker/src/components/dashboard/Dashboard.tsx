@@ -1,8 +1,9 @@
 import { LastActivityTable } from "./LastActivityTable"
 import { ChartProject } from "./ChartProject"
-import ActivityTable from "./activityTable"
+import ActivityTable from "./ActivityTable"
 import { ProjectTable } from "./ProjectTable"
 import VerticalActivityStepper from "./VerticalActivityStepper"
+import Navbar from "../navbar/Navbar"
 
 const commits = [
   {
@@ -57,6 +58,8 @@ const data = [
 
 export default function Dashboard() {
   return (
+    <div>
+    <Navbar />
     <div className="min-h-screen p-6 bg-background">
       {/* grid utama: sidebar kiri + konten kanan */}
       <div className="grid grid-cols-[280px_1fr] gap-6 h-full">
@@ -79,6 +82,7 @@ export default function Dashboard() {
           <ProjectTable data={data}/>
         </main>
       </div>
+    </div>
     </div>
   )
 }

@@ -8,7 +8,7 @@ export default function FloatingNavbar() {
 
   return (
     <nav className="">
-      <div className="bg-black text-white rounded-full px-8 py-4 shadow-lg">
+      <div className="border-white/10 bg-white/60 backdrop-blur-xl dark:bg-zinc-900/40 text-white rounded-full px-8 py-4 shadow-lg border">
         <div className="flex items-center justify-center gap-12">
           {/* Logo/Brand */}
           

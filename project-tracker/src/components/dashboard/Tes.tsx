@@ -8,6 +8,7 @@ import Navbar from "../navbar/Navbar"
 import TableCard from "../ProjectListPage/tableCard"
 import type { Project } from "../ProjectListPage/tableCard"
 import { CardProject } from "../ProjectListPage/Card"
+import ProjectListPage from "../ProjectListPage/ProjectListPage"
 
 const data = [
   {
@@ -36,7 +37,7 @@ const data = [
 
 export default function Tes() {
     return (
-        <TableCard projects={demoProjects} />
+        <ProjectListPage />
     )
 }
 

@@ -7,7 +7,7 @@ export default function FloatingNavbar() {
   const isActive = (path: any) => active === path
 
   return (
-    <nav className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
+    <nav className="">
       <div className="bg-black text-white rounded-full px-8 py-4 shadow-lg">
         <div className="flex items-center justify-center gap-12">
           {/* Logo/Brand */}

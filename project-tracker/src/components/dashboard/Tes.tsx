@@ -3,6 +3,8 @@ import { ProjectTable } from "./ProjectTable"
 import Dashboard from "./Dashboard"
 import Dummy from "./VerticalActivityStepper"
 import FloatingNavbar from "../FloatingNavbar"
+import Title from "../Title"
+import Navbar from "../navbar"
 
 const data = [
   {
@@ -31,6 +33,6 @@ const data = [
 
 export default function Tes() {
     return (
-        <FloatingNavbar />
+        <Navbar />
     )
 }

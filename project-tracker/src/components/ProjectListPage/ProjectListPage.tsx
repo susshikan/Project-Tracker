@@ -5,8 +5,8 @@ import TableCard from "./TableCard";
  
 export default function ProjectListPage(){ 
     return( 
-        <div className="item-center"> 
-        <div className="flex justify-center min-h-screen p-4 flex-col"> 
+        <div className="flex items-center justify-center min-h-screen bg-background"> 
+        <div className="w-full max-w-6xl p-4"> 
             <div className="pl-4"> 
                 <AddButton /> 
             </div> 

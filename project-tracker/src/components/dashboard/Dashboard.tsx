@@ -59,7 +59,6 @@ const data = [
 export default function Dashboard() {
   return (
     <div>
-    <Navbar />
     <div className="min-h-screen p-6 bg-background">
       {/* grid utama: sidebar kiri + konten kanan */}
       <div className="grid grid-cols-[280px_1fr] gap-6 h-full">

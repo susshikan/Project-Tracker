@@ -38,7 +38,7 @@ const data = [
 
 export default function Tes() {
     return (
-       <SettingsPage />
+       <Dashboard />
     )
 }
 

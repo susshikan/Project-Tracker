@@ -1,10 +1,12 @@
 import React from "react"
 import { useState } from "react"
+import { Link, useLocation } from "react-router-dom"
 
 export default function FloatingNavbar() {
-  const [active, setActive] = useState("/")
+  const location = useLocation()
+  const activePath = location.pathname
 
-  const isActive = (path: any) => active === path
+  const isActive = (path: string) => activePath === path
 
   return (
     <nav className="">
@@ -14,32 +16,31 @@ export default function FloatingNavbar() {
           
 
           {/* Navigation Links */}
-          <button
-            onClick={() => setActive("/")}
+          <Link
+            to='/'
             className={`transition-colors ${
               isActive("/") ? "text-white font-semibold" : "text-gray-400 hover:text-white"
             }`}
           >
             Home
-          </button>
+          </Link>
 
-          <button
-            onClick={() => setActive("/projects")}
+          <Link
+            to='/projects'
             className={`transition-colors ${
               isActive("/projects") ? "text-white font-semibold" : "text-gray-400 hover:text-white"
             }`}
           >
             Projects
-          </button>
-
-          <button
-            onClick={() => setActive("/settings")}
+          </Link> 
+          <Link
+            to='/settings'
             className={`transition-colors ${
               isActive("/settings") ? "text-white font-semibold" : "text-gray-400 hover:text-white"
             }`}
           >
             Settings
-          </button>
+          </Link>
 
           {/* Right side - profile */}
           <div className="w-10 h-10 bg-white rounded-full" />

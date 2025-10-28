@@ -1,18 +1,23 @@
 import { Request, Response } from "express";
-import prisma from "../generated/prisma"
+import { PrismaClient } from "../../generated/prisma";
 import { CreateUserDTO, UpdateUserDTO } from "../types/userType";
+
+const prisma = new PrismaClient();
 
 export const createUser = async (req: Request, res: Response) => {
   try {
     const data: CreateUserDTO = req.body;
-    if (!data.name || !data.email) {
-      return res.status(400).json({ message: "Name and email are required" });
+    if (!data.name || !data.email || !data.password) {
+      return res.status(400).json({ message: "Name, passowrd, email are required" });
     }
 
-    const existing = await prisma.user.findUnique({ where: { email: data.email } });
+    const existing = await prisma.user.findUnique({where: {
+        email: data.email
+    }});
     if (existing) {
       return res.status(400).json({ message: "Email already used" });
     }
+
 
     const newUser = await prisma.user.create({ data });
     res.status(201).json(newUser);

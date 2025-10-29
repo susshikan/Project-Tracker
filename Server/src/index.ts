@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import passport from "passport";
 import userRouter from './routes/userRoutes';
 import authRouter from './routes/authRoutes';
+import projectRouter from './routes/projectRoutes';
 import { setupJwt } from './config/passportJWT';
 
 const port = 3001;
@@ -18,6 +19,7 @@ setupJwt(passport)
 
 app.use('/api/auth', authRouter)
 app.use('/api/users', userRouter)
+app.unsubscribe('api/projects', projectRouter)
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);

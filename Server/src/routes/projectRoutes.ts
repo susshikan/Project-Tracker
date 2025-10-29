@@ -4,3 +4,10 @@ import { getProject, getProjectById, createProject, updateProject, deleteProject
 
 const projectRouter = express.Router()
 
+projectRouter.get('/', passport.authenticate('jwt', {session: false}), getProject)
+projectRouter.post('/', passport.authenticate('jwt', {session: false}), createProject)
+projectRouter.get('/:id', passport.authenticate('jwt', {session: false}), getProjectById)
+projectRouter.put('/:id', passport.authenticate('jwt', {session: false}), updateProject)
+projectRouter.delete('/:id', passport.authenticate('jwt', {session: false}), deleteProject)
+
+export default projectRouter

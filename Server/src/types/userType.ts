@@ -1,4 +1,4 @@
-import {User} from '../../generated/prisma/client'
+import {User, Project} from '../../generated/prisma/client'
 import { Request } from 'express';
 
 export interface CreateUserDTO {

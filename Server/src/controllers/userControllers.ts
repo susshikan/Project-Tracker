@@ -1,76 +1,18 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "../../generated/prisma";
-import { CreateUserDTO, UpdateUserDTO } from "../types/userType";
-
-const prisma = new PrismaClient();
-
-export const createUser = async (req: Request, res: Response) => {
-  try {
-    const data: CreateUserDTO = req.body;
-    if (!data.name || !data.email || !data.password) {
-      return res.status(400).json({ message: "Name, passowrd, email are required" });
-    }
-
-    const existing = await prisma.user.findUnique({where: {
-        email: data.email
-    }});
-    if (existing) {
-      return res.status(400).json({ message: "Email already used" });
-    }
+import { UserRequest } from "../types/userType";
 
 
-    const newUser = await prisma.user.create({ data });
-    res.status(201).json(newUser);
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
+export async function getProfile(req: Request, res: Response) {
+  const reqUser = req as UserRequest
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
   }
-};
-
-export const getAllUsers = async (_req: Request, res: Response) => {
-  try {
-    const users = await prisma.user.findMany({ include: { projects: true } });
-    res.json(users);
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-export const getUserById = async (req: Request, res: Response) => {
-  try {
-    const id = parseInt(req.params.id);
-    const user = await prisma.user.findUnique({
-      where: { id },
-      include: { projects: true },
-    });
-    if (!user) return res.status(404).json({ message: "User not found" });
-    res.json(user);
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-export const updateUser = async (req: Request, res: Response) => {
-  try {
-    const id = parseInt(req.params.id);
-    const data: UpdateUserDTO = req.body;
-
-    const updated = await prisma.user.update({
-      where: { id },
-      data,
-    });
-
-    res.json(updated);
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-export const deleteUser = async (req: Request, res: Response) => {
-  try {
-    const id = parseInt(req.params.id);
-    await prisma.user.delete({ where: { id } });
-    res.json({ message: "User deleted successfully" });
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
-  }
-};
+  res.json({
+    message: "Akses diterima",
+    user: {
+      id: reqUser.user.id,
+      email: reqUser.user.email,
+      name: reqUser.user.name,
+    },
+  });
+}

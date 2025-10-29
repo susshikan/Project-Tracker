@@ -1,9 +1,11 @@
 import express from 'express'
-const userRouter = express.Router();
-import { createUser, getAllUsers, getUserById } from '../controllers/userControllers';
+import passport from 'passport'
+import { getProfile } from '../controllers/userControllers'
+import { RequestHandler } from "express";
+import { UserRequest } from '../types/userType';
 
-userRouter.get('/', getAllUsers)
-userRouter.post('/', createUser)
-userRouter.get('/:id', getUserById)
+const userRouter = express.Router()
+
+userRouter.get('/profile', passport.authenticate('jwt', {session: false}), getProfile)
 
 export default userRouter

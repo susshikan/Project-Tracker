@@ -10,4 +10,11 @@ projectRouter.get('/:id', passport.authenticate('jwt', {session: false}), getPro
 projectRouter.put('/:id', passport.authenticate('jwt', {session: false}), updateProject)
 projectRouter.delete('/:id', passport.authenticate('jwt', {session: false}), deleteProject)
 
+projectRouter.get('/:projectId/commits')
+projectRouter.post('/:projectId/commits')
+
+projectRouter.get('/:projectid/commits/:commitid')
+projectRouter.put('/:projectid/commits/:commitid')
+projectRouter.delete('/:projectid/commits/:commitid')
+
 export default projectRouter

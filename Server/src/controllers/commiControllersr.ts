@@ -7,9 +7,16 @@ const prisma = new PrismaClient();
 interface commitParams {
     projectLocalId?: number
 }
+//projects/:id/commits/:id
+
+interface commitUpdateParams{
+    localId: Number
+    projectLocalId: Number
+}
 
 interface commitBody{
-    projectLocalId: number
+    localId: Number
+    projectLocalId: Number
     message: string
 }
 
@@ -70,6 +77,7 @@ export async function createCommit(req: Request<{}, {}, commitBody>, res: Respon
         return res.status(401).json({ message: "Unauthorized" })
     }
     let allCommit;
+    const localId =  Number(req.body?.localId)
     const projectId = Number(req.body?.projectLocalId)
     const message = (req.body?.message ?? "").trim()
 
@@ -82,6 +90,7 @@ export async function createCommit(req: Request<{}, {}, commitBody>, res: Respon
     try {  
         const newCommit = await prisma.commit.create({
             data: {
+                localId: localId,
                 userId: reqCommit.user.id,
                 projectLocalId: projectId,
                 message: message

@@ -9,8 +9,8 @@ interface CommitParams {
 }
 
 interface CommitByIdParams {
-  localId: string;
-  projectLocalId: string;
+  commitId: string;
+  projectId: string;
 }
 
 interface CommitBody {
@@ -134,8 +134,8 @@ export async function getCommitById(req: Request<CommitByIdParams>, res: Respons
     return res.status(401).json({ message: "Unauthorized" });
   }
 
-  const localId = Number(req.params.localId);
-  const projectId = Number(req.params.projectLocalId);
+  const localId = Number(req.params.commitId);
+  const projectId = Number(req.params.projectId);
 
   if (Number.isNaN(localId)) {
     return res.status(400).json({ message: "localId harus berupa angka" });
@@ -172,8 +172,8 @@ export async function updateCommit(req: Request<CommitByIdParams, {}, CommitUpda
     return res.status(401).json({ message: "Unauthorized" });
   }
 
-  const localId = Number(req.params.localId);
-  const projectId = Number(req.params.projectLocalId);
+  const localId = Number(req.params.commitId);
+  const projectId = Number(req.params.projectId);
 
   if (Number.isNaN(localId)) {
     return res.status(400).json({ message: "localId harus berupa angka" });
@@ -218,8 +218,8 @@ export async function deleteCommit(req: Request<CommitByIdParams>, res: Response
     return res.status(401).json({ message: "Unauthorized" });
   }
 
-  const localId = Number(req.params.localId);
-  const projectId = Number(req.params.projectLocalId);
+  const localId = Number(req.params.commitId);
+  const projectId = Number(req.params.projectId);
 
   if (Number.isNaN(localId)) {
     return res.status(400).json({ message: "localId harus berupa angka" });

@@ -16,3 +16,7 @@ export async function getProfile(req: Request, res: Response) {
     },
   });
 }
+
+export async function updateProfile(){
+  
+}

@@ -47,10 +47,11 @@ export async function getProjectById(req: Request<ProjectParam, {}, {}>, res: Re
         return res.status(401).json({ message: "Unauthorized" })
     }
     let project
+    const paramId = Number(req.params?.id)
     try {
         project = await prisma.project.findFirst({
             where: {
-                localId: req.params.id,
+                localId: paramId,
                 userId: reqProject.user.id
             }
         })

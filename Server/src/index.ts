@@ -19,7 +19,7 @@ setupJwt(passport)
 
 app.use('/api/auth', authRouter)
 app.use('/api/users', userRouter)
-app.unsubscribe('api/projects', projectRouter)
+app.use('/api/projects', projectRouter)
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);

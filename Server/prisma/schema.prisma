@@ -19,7 +19,8 @@ model User {
   name String @unique
   email String @unique
   password String
-  projects Project[]
+  projects Project[] 
+  commits Commit[]
 }
 
 model Project {
@@ -28,5 +29,17 @@ model Project {
   title String
   createAt DateTime @default(now())
   userId Int
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  commit Commit[]
+  @@unique([userId, localId])
+}
+
+model Commit {
+  id Int @id @default(autoincrement())
+  message String
+  createAt DateTime @default(now())
+  projectLocalId Int
+  userId Int
+  project Project @relation(fields: [userId, projectLocalId], references: [userId, localId], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

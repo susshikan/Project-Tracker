@@ -5,7 +5,7 @@ import { Request, Response } from "express";
 const prisma = new PrismaClient();
 
 interface CommitParams {
-  projectLocalId?: string;
+  projectId?: number;
 }
 
 interface CommitByIdParams {
@@ -53,7 +53,7 @@ export async function getCommitPerProject(req: Request<CommitParams, {}, {}>, re
     return res.status(401).json({ message: "Unauthorized" });
   }
 
-  const projectId = Number(req.params?.projectLocalId);
+  const projectId = Number(req.params?.projectId);
   if (Number.isNaN(projectId)) {
     return res.status(400).json({ message: "projectId harus berupa angka" });
   }
@@ -85,7 +85,7 @@ export async function createCommit(req: Request<CommitParams, {}, CommitBody>, r
   }
 
   const localId = Number(req.body?.localId);
-  const projectId = Number(req.params?.projectLocalId);
+  const projectId = Number(req.params?.projectId);
   const message = (req.body?.message ?? "").trim();
 
   if (Number.isNaN(projectId)) {

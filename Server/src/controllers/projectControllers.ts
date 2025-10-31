@@ -82,11 +82,22 @@ export async function createProject(req: Request<{}, {}, CreateProjectBody>, res
     }
 
     try {
+        const updateUser = await prisma.user.update({
+            where: {
+                id: reqProject.user.id
+            },
+            data: {
+                totalProject:  {
+                    increment: 1
+                }
+            }
+        })
         const newProject = await prisma.project.create({
             data: {
-                localId,
+                localId: updateUser.totalProject,
                 title,
-                userId: reqProject.user.id
+                userId: reqProject.user.id,
+                totalCommit: 0
             }
         })
 

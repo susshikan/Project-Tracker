@@ -23,7 +23,7 @@ export async function register({email, password, name}: RegisterDTO) {
 
   const hashed = await bcrypt.hash(password, 10);
   const newUser = await prisma.user.create({
-    data: { email, password: hashed, name },
+    data: { email, password: hashed, name, totalProject: 0 },
   });
 
   return { message: "Registrasi berhasil", user: { id: newUser.id, email: newUser.email } };

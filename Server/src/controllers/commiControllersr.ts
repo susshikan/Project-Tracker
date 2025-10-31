@@ -1,5 +1,5 @@
 import { UserRequest } from "../types/userType";
-import { PrismaClient } from "../../generated/prisma";
+import { PrismaClient, Prisma } from "../../generated/prisma";
 import { Request, Response } from "express";
 
 const prisma = new PrismaClient();
@@ -99,16 +99,21 @@ export async function createCommit(req: Request<CommitParams, {}, CommitBody>, r
   }
 
   try {
-    const project = await prisma.project.findFirst({
+    const project = await prisma.project.update({
       where: {
-        userId: reqCommit.user.id,
-        localId: projectId,
+        userId_localId: {userId: reqCommit.user.id, localId: projectId}
       },
+      data: {
+        totalCommit: {
+          increment: 1
+        }
+      }
     });
 
     if (!project) {
       return res.status(404).json({ message: "Project tidak ditemukan" });
     }
+
 
     const newCommit = await prisma.commit.create({
       data: {
@@ -123,6 +128,11 @@ export async function createCommit(req: Request<CommitParams, {}, CommitBody>, r
       data: newCommit,
     });
   } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code  === 'P2025') {
+        res.status(404).json({message: "Project dengan id tersebut tidak ditemukan!"})
+      }
+    }
     const message = error instanceof Error ? error.message : "Gagal membuat commit";
     return res.status(400).json({ message });
   }

@@ -5,13 +5,17 @@ import ProjectListPage from "./components/ProjectListPage/ProjectListPage"
 import SettingsPage from "./components/Settings/SettingsPage"
 import LoginPage from "./components/auth/LoginPage"
 import RegisterPage from "./components/auth/RegisterPage"
+import { AuthProvider } from "./components/auth/AuthContext"
+import ProtectedRoute from "./components/auth/ProtectedRoute"
 
 
 
 function App() {
   return (
     <Router>
-      <AppLayout />
+      <AuthProvider>
+        <AppLayout />
+      </AuthProvider>
     </Router>
   )
 }
@@ -24,9 +28,11 @@ function AppLayout() {
     <div className="min-h-screen">
       {!hideNavbar && <Navbar />}
       <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/projects" element={<ProjectListPage />} />
-        <Route path="/settings" element={<SettingsPage />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/projects" element={<ProjectListPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+        </Route>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
       </Routes>

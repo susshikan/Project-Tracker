@@ -1,5 +1,5 @@
-import { useState } from "react"
-import { Link } from "react-router-dom"
+import { useEffect, useMemo, useState } from "react"
+import { Link, type Location, useLocation, useNavigate } from "react-router-dom"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -12,16 +12,31 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useAuth } from "./AuthContext"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { login, isAuthenticated } = useAuth()
+
+  const redirectPath = useMemo(() => {
+    const state = location.state as { from?: Location } | null
+    return state?.from?.pathname ?? "/"
+  }, [location.state])
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    // Placeholder action until authentication is wired up.
-    console.log("Login attempt", { email, password })
+    login()
+    navigate(redirectPath, { replace: true })
   }
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(redirectPath, { replace: true })
+    }
+  }, [isAuthenticated, navigate, redirectPath])
 
   return (
     <div className="bg-gradient-to-br from-slate-100 via-white to-slate-200 min-h-screen">

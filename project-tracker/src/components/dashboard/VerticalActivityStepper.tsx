@@ -1,10 +1,9 @@
 "use client"
 
-import { Card, CardContent } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { CheckCircle, Circle, Clock } from "lucide-react"
-import { string } from "zod"
 
 const steps = [
   {
@@ -33,12 +32,6 @@ const steps = [
   },
 ]
 
-interface Step {
-  title: string
-  project: string
-  date: string
-}
-
 export default function VerticalActivityStepper() {
   return (
     <Card className="w-full max-w-md mx-auto border rounded-2xl p-6">
@@ -51,8 +44,14 @@ export default function VerticalActivityStepper() {
         <div className="flex flex-col space-y-8">
           {steps.map((step, index) => {
             const isLast = index === steps.length - 1
-            const icon = <Circle className="w-5 h-5 text-muted-foreground" />
-              
+            const icon =
+              step.status === "done" ? (
+                <CheckCircle className="h-5 w-5 text-emerald-500" />
+              ) : step.status === "in-progress" ? (
+                <Clock className="h-5 w-5 text-amber-500" />
+              ) : (
+                <Circle className="h-5 w-5 text-muted-foreground" />
+              )
 
             return (
               <div key={index} className="relative flex items-start gap-4">
@@ -65,7 +64,9 @@ export default function VerticalActivityStepper() {
                 <div className="flex-1 space-y-1">
                   <div className="flex items-center justify-between">
                     <h3 className="font-medium">{step.description}</h3>
-                    
+                    <Badge variant="secondary" className="capitalize">
+                      {step.status.replace("-", " ")}
+                    </Badge>
                   </div>
                   
                   <p className="text-xs text-muted-foreground">{step.date}</p>

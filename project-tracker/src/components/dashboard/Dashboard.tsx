@@ -1,62 +1,123 @@
-import { LastActivityTable } from "./LastActivityTable"
+import { useEffect, useMemo, useState } from "react"
 import { ChartProject } from "./ChartProject"
 import ActivityTable from "./ActivityTable"
-import { ProjectTable } from "./ProjectTable"
+import { ProjectTable, schema as projectTableSchema } from "./ProjectTable"
 import VerticalActivityStepper from "./VerticalActivityStepper"
-import Navbar from "../navbar/Navbar"
+import { useAuth } from "../auth/AuthContext"
+import { apiFetch, ApiError } from "@/lib/api"
+import { type z } from "zod"
 
-const commits = [
-  {
-    sha: "1a2b3c4d5e6f7g8h9i",
-    message: "Fix navbar alignment issue",
-    author: "Haikal",
-    avatar: "https://avatars.githubusercontent.com/u/583231?v=4",
-    branch: "main",
-    date: "2025-10-15T09:20:00",
-  },
-  {
-    sha: "7h8i9j0k1l2m3n4o5p",
-    message: "Add scroll area card component",
-    author: "Aruni",
-    avatar: "https://avatars.githubusercontent.com/u/1024025?v=4",
-    branch: "feature/ui",
-    date: "2025-10-14T21:45:00",
-  },
-  {
-    sha: "4f5g6h7i8j9k0l1m2n",
-    message: "Refactor ChartContainer props",
-    author: "Edward",
-    branch: "dev",
-    date: "2025-10-14T16:00:00",
-  },
-]
+type ProjectRow = z.infer<typeof projectTableSchema>
 
-const data = [
-  {
-    id: 1,
-    projectName: "Sofita Queue System",
-    status: "In Progress",
-    lastCommit: "2025-10-12",
-    deadline: "2025-11-01",
-  },
-  {
-    id: 2,
-    projectName: "Sofitify Music Player",
-    status: "Done",
-    lastCommit: "2025-10-08",
-    deadline: "2025-10-10",
-  },
-  {
-    id: 3,
-    projectName: "Moodle Sync Bot",
-    status: "In Progress",
-    lastCommit: "2025-10-14",
-    deadline: "2025-11-05",
-  },
-]
+type ProjectApiResponse = {
+  data?: Array<{
+    id: number
+    localId: number | null
+    title: string
+    status: boolean
+    deadline: string | null
+    updatedAt?: string | null
+    createAt?: string | null
+    createdAt?: string | null
+  }>
+}
 
+function formatDate(value: string | Date | null | undefined) {
+  if (!value) {
+    return "-"
+  }
+
+  const date = value instanceof Date ? value : new Date(value)
+  if (Number.isNaN(date.getTime())) {
+    return "-"
+  }
+
+  return date.toLocaleDateString()
+}
 
 export default function Dashboard() {
+  const { token, logout } = useAuth()
+  const [projects, setProjects] = useState<ProjectRow[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!token) {
+      setProjects([])
+      return
+    }
+
+    const controller = new AbortController()
+
+    const fetchProjects = async () => {
+      setIsLoading(true)
+      setError(null)
+
+      try {
+        const response = await apiFetch<ProjectApiResponse>("/projects", {
+          token,
+          signal: controller.signal,
+        })
+
+        const mapped = (response.data ?? []).map<ProjectRow>((project) => ({
+          id: project.localId ?? project.id,
+          projectName: project.title,
+          status: project.status ? "Done" : "In Progress",
+          lastCommit: formatDate(
+            project.updatedAt ?? project.createAt ?? project.createdAt ?? null,
+          ),
+          deadline: formatDate(project.deadline),
+        }))
+
+        setProjects(mapped)
+      } catch (caughtError) {
+        if (caughtError instanceof DOMException && caughtError.name === "AbortError") {
+          return
+        }
+
+        if (caughtError instanceof ApiError && caughtError.status === 401) {
+          logout()
+        }
+
+        const message =
+          caughtError instanceof ApiError
+            ? caughtError.message
+            : caughtError instanceof Error
+              ? caughtError.message
+              : "Gagal memuat data proyek"
+
+        setError(message)
+        setProjects([])
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    void fetchProjects()
+
+    return () => controller.abort()
+  }, [logout, token])
+
+  const projectTable = useMemo(() => {
+    if (isLoading) {
+      return (
+        <div className="flex h-48 items-center justify-center rounded-xl border bg-muted/30 text-sm text-muted-foreground">
+          Memuat data proyek...
+        </div>
+      )
+    }
+
+    if (error) {
+      return (
+        <div className="flex h-48 items-center justify-center rounded-xl border bg-destructive/5 px-4 text-sm text-destructive">
+          {error}
+        </div>
+      )
+    }
+
+    return <ProjectTable data={projects} />
+  }, [error, isLoading, projects])
+
   return (
     <div>
     <div className="min-h-screen p-6 bg-background">
@@ -78,7 +139,7 @@ export default function Dashboard() {
           </div>
 
           {/* Bottom large card */}
-          <ProjectTable data={data}/>
+          {projectTable}
         </main>
       </div>
     </div>

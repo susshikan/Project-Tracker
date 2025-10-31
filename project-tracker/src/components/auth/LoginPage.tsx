@@ -19,17 +19,20 @@ export default function LoginPage() {
   const [password, setPassword] = useState("")
   const navigate = useNavigate()
   const location = useLocation()
-  const { login, isAuthenticated } = useAuth()
+  const { login, isAuthenticated, isAuthenticating, authError } = useAuth()
 
   const redirectPath = useMemo(() => {
     const state = location.state as { from?: Location } | null
     return state?.from?.pathname ?? "/"
   }, [location.state])
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    login()
-    navigate(redirectPath, { replace: true })
+    try {
+      await login({ email, password })
+    } catch {
+      // Error state handled via auth context; no-op here.
+    }
   }
 
   useEffect(() => {
@@ -99,8 +102,14 @@ export default function LoginPage() {
                   />
                 </div>
 
-                <Button type="submit" className="w-full">
-                  Sign in
+                {authError && (
+                  <div className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                    {authError}
+                  </div>
+                )}
+
+                <Button type="submit" className="w-full" disabled={isAuthenticating}>
+                  {isAuthenticating ? "Signing in..." : "Sign in"}
                 </Button>
               </form>
             </CardContent>

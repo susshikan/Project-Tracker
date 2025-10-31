@@ -1,5 +1,5 @@
-import { useState } from "react"
-import { Link } from "react-router-dom"
+import { useEffect, useMemo, useState } from "react"
+import { Link, type Location, useLocation, useNavigate } from "react-router-dom"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -12,23 +12,44 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useAuth } from "./AuthContext"
 
 export default function RegisterPage() {
   const [fullName, setFullName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
+  const [formError, setFormError] = useState<string | null>(null)
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { register: registerAccount, isAuthenticated, isAuthenticating, authError } = useAuth()
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const redirectPath = useMemo(() => {
+    const state = location.state as { from?: Location } | null
+    return state?.from?.pathname ?? "/"
+  }, [location.state])
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (password !== confirmPassword) {
-      // Basic mismatch guard until real validation lands.
-      console.warn("Passwords do not match")
+      setFormError("Password tidak cocok")
       return
     }
 
-    console.log("Register attempt", { fullName, email })
+    setFormError(null)
+
+    try {
+      await registerAccount({ name: fullName, email, password })
+    } catch {
+      // error state handled via auth context
+    }
   }
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(redirectPath, { replace: true })
+    }
+  }, [isAuthenticated, navigate, redirectPath])
 
   return (
     <div className="bg-gradient-to-br from-slate-100 via-white to-slate-200 min-h-screen">
@@ -78,7 +99,12 @@ export default function RegisterPage() {
                     placeholder="Create a password"
                     autoComplete="new-password"
                     value={password}
-                    onChange={(event) => setPassword(event.target.value)}
+                    onChange={(event) => {
+                      setPassword(event.target.value)
+                      if (formError) {
+                        setFormError(null)
+                      }
+                    }}
                     required
                     minLength={8}
                   />
@@ -92,14 +118,25 @@ export default function RegisterPage() {
                     placeholder="Repeat your password"
                     autoComplete="new-password"
                     value={confirmPassword}
-                    onChange={(event) => setConfirmPassword(event.target.value)}
+                    onChange={(event) => {
+                      setConfirmPassword(event.target.value)
+                      if (formError) {
+                        setFormError(null)
+                      }
+                    }}
                     required
                     minLength={8}
                   />
                 </div>
 
-                <Button type="submit" className="w-full">
-                  Create account
+                {(formError || authError) && (
+                  <div className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                    {formError ?? authError}
+                  </div>
+                )}
+
+                <Button type="submit" className="w-full" disabled={isAuthenticating}>
+                  {isAuthenticating ? "Creating account..." : "Create account"}
                 </Button>
               </form>
             </CardContent>

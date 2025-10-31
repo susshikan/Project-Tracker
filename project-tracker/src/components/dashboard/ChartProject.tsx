@@ -1,6 +1,6 @@
 import { TrendingUp } from "lucide-react"
-import { Label, Pie, PieChart, Sector } from "recharts"
-import type{ PieSectorDataItem } from "recharts/types/polar/Pie"
+import { Pie, PieChart, Sector } from "recharts"
+import type { PieSectorDataItem } from "recharts/types/polar/Pie"
 
 import {
   Card,

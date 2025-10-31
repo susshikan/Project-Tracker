@@ -1,6 +1,3 @@
-import * as React from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { CardProject } from "./Card"
 
 export type Project = {
@@ -14,13 +11,11 @@ export default function TableCard({ projects }: { projects: Project[] }) {
     <main className="flex min-h-screen bg-background p-4 pt-3">
       <div className="w-full max-w-6xl">
         <div className="grid grid-cols-5 gap-4">
-          {projects.map((project, key) => {
-            return (
-                <div key={key}>
-                    <CardProject />
-                </div>
-            )
-          })}
+          {projects.map((project) => (
+            <div key={project.id}>
+              <CardProject />
+            </div>
+          ))}
         </div>
       </div>
     </main>

@@ -11,11 +11,14 @@ interface ProjectParam{
 interface CreateProjectBody {
     localId: number;
     title: string;
+    deadline: Date;
+    status: boolean;
 }
 
 interface UpdateProjectBody {
-    localId?: number;
     title?: string;
+    status?: boolean;
+    deadline?: Date;
 }
 
 export async function getProject(req: Request, res: Response){
@@ -72,6 +75,8 @@ export async function createProject(req: Request<{}, {}, CreateProjectBody>, res
 
     const localId = Number(req.body?.localId)
     const title = (req.body?.title ?? "").trim()
+    const deadline = new Date(req.body.deadline);
+    const status: boolean = Boolean(req.body.status)
 
     if (Number.isNaN(localId)) {
         return res.status(400).json({ message: "localId harus berupa angka" })
@@ -97,7 +102,9 @@ export async function createProject(req: Request<{}, {}, CreateProjectBody>, res
                 localId: updateUser.totalProject,
                 title,
                 userId: reqProject.user.id,
-                totalCommit: 0
+                totalCommit: 0,
+                deadline: deadline,
+                status: status
             }
         })
 
@@ -119,15 +126,7 @@ export async function updateProject(req: Request<ProjectParam, {}, UpdateProject
         return res.status(400).json({ message: "Id project tidak valid" })
     }
 
-    const updateData: { localId?: number; title?: string } = {}
-
-    if (req.body?.localId !== undefined) {
-        const newLocalId = Number(req.body.localId)
-        if (Number.isNaN(newLocalId)) {
-            return res.status(400).json({ message: "localId harus berupa angka" })
-        }
-        updateData.localId = newLocalId
-    }
+    const updateData: { title?: string, deadline?: Date, status?: boolean } = {}
 
     if (req.body?.title !== undefined) {
         const newTitle = req.body.title.trim()
@@ -135,6 +134,16 @@ export async function updateProject(req: Request<ProjectParam, {}, UpdateProject
             return res.status(400).json({ message: "title wajib diisi" })
         }
         updateData.title = newTitle
+    }
+
+    if (req.body?.status !== undefined) {
+        const newStatus = Boolean(req.body.status)
+        updateData.status = newStatus
+    }
+
+    if (req.body?.deadline !== undefined) {
+        const newStatus = new Date(req.body.deadline)
+        updateData.deadline = newStatus
     }
 
     if (Object.keys(updateData).length === 0) {

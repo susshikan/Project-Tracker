@@ -21,7 +21,7 @@ model User {
   password String
   projects Project[] 
   commits Commit[]
-  totalProject Int
+  totalProject Int @default(0)
 }
 
 model Project {
@@ -33,7 +33,9 @@ model Project {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   commit Commit[]
   @@unique([userId, localId])
-  totalCommit Int
+  totalCommit Int @default(0)
+  status Boolean
+  deadline DateTime?
 }
 
 model Commit {

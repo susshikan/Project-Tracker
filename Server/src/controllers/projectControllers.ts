@@ -9,7 +9,6 @@ interface ProjectParam{
 }
 
 interface CreateProjectBody {
-    localId: number;
     title: string;
     deadline: Date;
     status: boolean;
@@ -72,15 +71,9 @@ export async function createProject(req: Request<{}, {}, CreateProjectBody>, res
     if (!reqProject.user) {
         return res.status(401).json({ message: "Unauthorized" })
     }
-
-    const localId = Number(req.body?.localId)
     const title = (req.body?.title ?? "").trim()
     const deadline = new Date(req.body.deadline);
     const status: boolean = Boolean(req.body.status)
-
-    if (Number.isNaN(localId)) {
-        return res.status(400).json({ message: "localId harus berupa angka" })
-    }
 
     if (!title) {
         return res.status(400).json({ message: "title wajib diisi" })

@@ -1,32 +1,34 @@
+import { type ProjectListItem } from "@/types/project"
 import { CardProject } from "./Card"
 
-export type Project = {
-  id: string
-  name: string
-  tags: string[]
+type TableCardProps = {
+  projects: ProjectListItem[]
 }
 
-export default function TableCard({ projects }: { projects: Project[] }) {
-  return (
-    <main className="flex min-h-screen bg-background p-4 pt-3">
-      <div className="w-full max-w-6xl">
-        <div className="grid grid-cols-5 gap-4">
-          {projects.map((project) => (
-            <div key={project.id}>
-              <CardProject />
-            </div>
-          ))}
-        </div>
+function formatValue(value: string) {
+  return value && value.trim().length > 0 ? value : "-"
+}
+
+export default function TableCard({ projects }: TableCardProps) {
+  if (!projects.length) {
+    return (
+      <div className="flex min-h-[200px] items-center justify-center rounded-xl border border-dashed border-muted-foreground/40 bg-muted/20 text-sm text-muted-foreground">
+        Belum ada project yang tersimpan.
       </div>
-    </main>
+    )
+  }
+
+  return (
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      {projects.map((project) => (
+        <CardProject
+          key={project.id}
+          projectName={project.projectName}
+          status={project.status}
+          deadline={formatValue(project.deadline)}
+          lastCommit={formatValue(project.lastCommit)}
+        />
+      ))}
+    </div>
   )
 }
-//items-center
-export const demoProjects: Project[] = [
-  { id: "1", name: "Landing Page Revamp", tags: ["frontend", "tailwind", "a11y"] },
-  { id: "2", name: "API Gateway", tags: ["backend", "node", "auth"] },
-  { id: "3", name: "Mobile App", tags: ["react-native", "offline", "perf"] },
-  { id: "4", name: "Analytics Dashboard", tags: ["dashboard", "charts", "etl"] },
-  { id: "5", name: "Search Service", tags: ["elasticsearch", "indexing", "ops"] },
-  { id: "6", name: "Notification System", tags: ["queue", "workers", "retry"] },
-]

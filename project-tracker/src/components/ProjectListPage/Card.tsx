@@ -1,48 +1,40 @@
 "use client"
-import { Line, LineChart, XAxis } from "recharts"
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import { Calendar, Clock } from "lucide-react"
 
-export const description = "A line chart"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
-const chartData = [
-  { day: "Mon", commits: 12 },
-  { day: "Tue", commits: 19 },
-  { day: "Wed", commits: 15 },
-  { day: "Thu", commits: 25 },
-  { day: "Fri", commits: 22 },
-]
+type CardProjectProps = {
+  projectName: string
+  status: string
+  deadline: string
+  lastCommit: string
+}
 
-const chartConfig = {
-  commits: {
-    label: "Commits",
-    color: "var(--chart-1)",
-  },
-} satisfies ChartConfig
+export function CardProject({ projectName, status, deadline, lastCommit }: CardProjectProps) {
+  const isDone = status.toLowerCase() === "done"
+  const badgeVariant: "default" | "secondary" = isDone ? "default" : "secondary"
 
-export function CardProject() {
   return (
-    <Card className="aspect-square flex flex-col">
-      <CardHeader>
-        <CardTitle className="text-2xl">Project Commits</CardTitle>
-        <CardDescription>Last 5 days</CardDescription>
+    <Card className="flex h-full flex-col justify-between border border-white/10 bg-white/60 backdrop-blur-xl dark:bg-zinc-900/40">
+      <CardHeader className="space-y-3">
+        <div className="flex items-center justify-between gap-2">
+          <CardTitle className="text-lg font-semibold">{projectName}</CardTitle>
+          <Badge variant={badgeVariant} className="capitalize">
+            {status}
+          </Badge>
+        </div>
       </CardHeader>
-      <CardContent className="flex-1">
-        <ChartContainer config={chartConfig}>
-          <LineChart
-            accessibilityLayer
-            data={chartData}
-            margin={{
-              left: 12,
-              right: 12,
-            }}
-          >
-            <XAxis dataKey="day" tickLine={false} axisLine={false} tickMargin={8} />
-            <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-            <Line dataKey="commits" type="natural" stroke="var(--color-commits)" strokeWidth={2} dot={false} />
-          </LineChart>
-        </ChartContainer>
+      <CardContent className="space-y-3 text-sm text-muted-foreground">
+        <div className="flex items-center gap-2">
+          <Calendar className="h-4 w-4" />
+          <span>Deadline: {deadline}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Clock className="h-4 w-4" />
+          <span>Last update: {lastCommit}</span>
+        </div>
       </CardContent>
     </Card>
   )

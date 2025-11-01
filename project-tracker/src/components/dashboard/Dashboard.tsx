@@ -1,43 +1,16 @@
 import { useEffect, useMemo, useState } from "react"
 import { ChartProject } from "./ChartProject"
 import ActivityTable from "./ActivityTable"
-import { ProjectTable, schema as projectTableSchema } from "./ProjectTable"
+import { ProjectTable } from "./ProjectTable"
 import VerticalActivityStepper from "./VerticalActivityStepper"
 import { useAuth } from "../auth/AuthContext"
 import { apiFetch, ApiError } from "@/lib/api"
-import { type z } from "zod"
-
-type ProjectRow = z.infer<typeof projectTableSchema>
-
-type ProjectApiResponse = {
-  data?: Array<{
-    id: number
-    localId: number | null
-    title: string
-    status: boolean
-    deadline: string | null
-    updatedAt?: string | null
-    createAt?: string | null
-    createdAt?: string | null
-  }>
-}
-
-function formatDate(value: string | Date | null | undefined) {
-  if (!value) {
-    return "-"
-  }
-
-  const date = value instanceof Date ? value : new Date(value)
-  if (Number.isNaN(date.getTime())) {
-    return "-"
-  }
-
-  return date.toLocaleDateString()
-}
+import { mapProjectResponse, type ProjectApiResponse } from "@/lib/projectApi"
+import { type ProjectListItem } from "@/types/project"
 
 export default function Dashboard() {
   const { token, logout } = useAuth()
-  const [projects, setProjects] = useState<ProjectRow[]>([])
+  const [projects, setProjects] = useState<ProjectListItem[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -59,17 +32,7 @@ export default function Dashboard() {
           signal: controller.signal,
         })
 
-        const mapped = (response.data ?? []).map<ProjectRow>((project) => ({
-          id: project.localId ?? project.id,
-          projectName: project.title,
-          status: project.status ? "Done" : "In Progress",
-          lastCommit: formatDate(
-            project.updatedAt ?? project.createAt ?? project.createdAt ?? null,
-          ),
-          deadline: formatDate(project.deadline),
-        }))
-
-        setProjects(mapped)
+        setProjects(mapProjectResponse(response))
       } catch (caughtError) {
         if (caughtError instanceof DOMException && caughtError.name === "AbortError") {
           return

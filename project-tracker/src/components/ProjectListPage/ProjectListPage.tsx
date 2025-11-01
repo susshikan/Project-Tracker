@@ -1,28 +1,94 @@
-import { AddButton } from "./AddButton";
-import type { Project } from "./TableCard";
-import TableCard from "./TableCard";
-//flex items-center justify-center min-h-screen bg-background p-4 flex-col
- 
-export default function ProjectListPage(){ 
-    return(
-        <div>
-        <div className="flex items-center justify-center min-h-screen bg-background"> 
-        <div className="w-full max-w-6xl p-4"> 
-            <div className="pl-4"> 
-                <AddButton /> 
-            </div> 
-            <TableCard projects={demoProjects}/> 
-        </div> 
-        </div> 
-        </div>
-    ) 
-}
+import { useEffect, useMemo, useState } from "react"
 
-export const demoProjects: Project[] = [
-  { id: "1", name: "Landing Page Revamp", tags: ["frontend", "tailwind", "a11y"] },
-  { id: "2", name: "API Gateway", tags: ["backend", "node", "auth"] },
-  { id: "3", name: "Mobile App", tags: ["react-native", "offline", "perf"] },
-  { id: "4", name: "Analytics Dashboard", tags: ["dashboard", "charts", "etl"] },
-  { id: "5", name: "Search Service", tags: ["elasticsearch", "indexing", "ops"] },
-  { id: "6", name: "Notification System", tags: ["queue", "workers", "retry"] },
-]
+import { apiFetch, ApiError } from "@/lib/api"
+import { mapProjectResponse, type ProjectApiResponse } from "@/lib/projectApi"
+import { type ProjectListItem } from "@/types/project"
+
+import { useAuth } from "../auth/AuthContext"
+import { AddButton } from "./AddButton"
+import TableCard from "./TableCard"
+
+export default function ProjectListPage() {
+  const { token, logout } = useAuth()
+  const [projects, setProjects] = useState<ProjectListItem[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!token) {
+      setProjects([])
+      return
+    }
+
+    const controller = new AbortController()
+
+    const fetchProjects = async () => {
+      setIsLoading(true)
+      setError(null)
+
+      try {
+        const response = await apiFetch<ProjectApiResponse>("/projects", {
+          token,
+          signal: controller.signal,
+        })
+
+        setProjects(mapProjectResponse(response))
+      } catch (caughtError) {
+        if (caughtError instanceof DOMException && caughtError.name === "AbortError") {
+          return
+        }
+
+        if (caughtError instanceof ApiError && caughtError.status === 401) {
+          logout()
+        }
+
+        const message =
+          caughtError instanceof ApiError
+            ? caughtError.message
+            : caughtError instanceof Error
+              ? caughtError.message
+              : "Gagal memuat daftar project"
+
+        setError(message)
+        setProjects([])
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    void fetchProjects()
+
+    return () => controller.abort()
+  }, [logout, token])
+
+  const content = useMemo(() => {
+    if (isLoading) {
+      return (
+        <div className="flex min-h-[160px] items-center justify-center rounded-xl border bg-muted/30 text-sm text-muted-foreground">
+          Memuat project...
+        </div>
+      )
+    }
+
+    if (error) {
+      return (
+        <div className="flex min-h-[160px] items-center justify-center rounded-xl border bg-destructive/5 px-4 text-sm text-destructive">
+          {error}
+        </div>
+      )
+    }
+
+    return <TableCard projects={projects} />
+  }, [error, isLoading, projects])
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-background">
+      <div className="w-full max-w-6xl space-y-6 p-4">
+        <div className="flex justify-end">
+          <AddButton />
+        </div>
+        {content}
+      </div>
+    </div>
+  )
+}

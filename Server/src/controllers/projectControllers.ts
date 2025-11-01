@@ -31,6 +31,9 @@ export async function getProject(req: Request, res: Response){
             where: {
                 userId: reqProject.user.id
             },
+            include: {
+                commit: true
+            },
             orderBy: {
                 createAt: 'desc'
             }
@@ -55,6 +58,9 @@ export async function getProjectById(req: Request<ProjectParam, {}, {}>, res: Re
             where: {
                 localId: paramId,
                 userId: reqProject.user.id
+            },
+            include: {
+                commit: true
             }
         })
     } catch (error) {

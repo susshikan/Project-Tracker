@@ -39,7 +39,7 @@ export async function login( {email, password }: LoginDTO) {
   const token = jwt.sign(
     { sub: user.id, email: user.email },
     process.env.JWT_SECRET || "supersecretjwt",
-    { expiresIn: "1h" }
+    { expiresIn: "24h" }
   );
 
   return { message: "Login berhasil", token };

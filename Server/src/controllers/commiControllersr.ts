@@ -14,7 +14,6 @@ interface CommitByIdParams {
 }
 
 interface CommitBody {
-  localId: number;
   message: string;
 }
 
@@ -84,15 +83,11 @@ export async function createCommit(req: Request<CommitParams, {}, CommitBody>, r
     return res.status(401).json({ message: "Unauthorized" });
   }
 
-  const localId = Number(req.body?.localId);
   const projectId = Number(req.params?.projectId);
   const message = (req.body?.message ?? "").trim();
 
   if (Number.isNaN(projectId)) {
     return res.status(400).json({ message: "projectId harus berupa angka" });
-  }
-  if (Number.isNaN(localId)) {
-    return res.status(400).json({ message: "localId harus berupa angka" });
   }
   if (!message) {
     return res.status(400).json({ message: "message wajib diisi" });
@@ -117,7 +112,7 @@ export async function createCommit(req: Request<CommitParams, {}, CommitBody>, r
 
     const newCommit = await prisma.commit.create({
       data: {
-        localId,
+        localId: project.totalCommit,
         userId: reqCommit.user.id,
         projectLocalId: projectId,
         message,

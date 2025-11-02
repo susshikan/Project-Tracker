@@ -2,6 +2,7 @@ import { Line, LineChart, XAxis } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { type ProjectListItem } from "@/types/project"
+import { Link } from "react-router-dom"
 
 type CommitData = {
   date: string
@@ -36,6 +37,8 @@ export function CardProject(props: ProjectListItem) {
   }))
 
   return (
+    <Link
+      to={'/projects/' + props.localId}>
     <Card className="aspect-square flex flex-col">
       <CardHeader className="">
         <CardTitle className="text-2xl">{props.projectName}</CardTitle>
@@ -64,5 +67,6 @@ export function CardProject(props: ProjectListItem) {
         </ChartContainer>
       </CardContent>
     </Card>
+    </Link>
   )
 }

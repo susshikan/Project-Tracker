@@ -15,7 +15,7 @@ export default function FloatingNavbar() {
 
           {/* Navigation Links */}
           <Link
-            to='/'
+            to={'/'}
             className={`transition-colors ${
               isActive("/") ? "text-white font-semibold" : "text-gray-400 hover:text-white"
             }`}

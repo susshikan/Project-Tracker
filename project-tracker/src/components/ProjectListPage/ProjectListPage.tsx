@@ -22,6 +22,9 @@ export default function ProjectListPage() {
     if (keepProjects) {
         setIsLoading(false)
         setError(null)
+    } else{
+      setIsLoading(true)
+      setError(null)
     }
 
 

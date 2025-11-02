@@ -18,3 +18,4 @@ export const projectSchema = z.object({
 })
 
 export type ProjectListItem = z.infer<typeof projectSchema>
+export type CommitsListItem = z.infer<typeof commitSchema>

@@ -7,7 +7,7 @@ import LoginPage from "./components/auth/LoginPage"
 import RegisterPage from "./components/auth/RegisterPage"
 import { AuthProvider } from "./components/auth/AuthContext"
 import ProtectedRoute from "./components/auth/ProtectedRoute"
-
+import ProjectPage from "./components/projectPage/ProjectPage"
 
 
 function App() {
@@ -32,6 +32,7 @@ function AppLayout() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/projects" element={<ProjectListPage />} />
           <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/projects/:id" element={<ProjectPage />} />
         </Route>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />

@@ -1,3 +1,4 @@
+import * as React from "react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -11,9 +12,14 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { CirclePlus } from "lucide-react"
+import { CirclePlus, CalendarIcon  } from "lucide-react"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Calendar } from "@/components/ui/calendar"
+import { format } from "date-fns"
+import { cn } from "@/lib/utils"
 
 export function AddButton() {
+  const [date, setDate] = React.useState<Date | undefined>()
   return (
     <Dialog>
       <form>
@@ -37,6 +43,31 @@ export function AddButton() {
             <div className="grid gap-3">
               <Label htmlFor="username-1">Description</Label>
               <Input id="username-1" name="username" defaultValue="" />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="deadline">Deadline</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !date && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {date ? format(date, "PPP") : <span>Pick a date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
           <DialogFooter>

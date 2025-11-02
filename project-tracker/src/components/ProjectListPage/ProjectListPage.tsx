@@ -14,17 +14,14 @@ export default function ProjectListPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const fetchProjects = useCallback(async (signal?: AbortSignal) => {
+  const fetchProjects = useCallback(async (signal?: AbortSignal, keepProjects = false) => {
     if (!token) {
       setProjects([]) 
       return
     }
-
-    if (projects.length != 0) {
-      
-    } else {
-      setIsLoading(true)
-      setError(null)
+    if (keepProjects) {
+        setIsLoading(false)
+        setError(null)
     }
 
 
@@ -35,14 +32,14 @@ export default function ProjectListPage() {
       })
 
       setProjects(mapProjectResponse(response))
+      setIsLoading(false)
     } catch (caughtError) {
       if (caughtError instanceof DOMException && caughtError.name === "AbortError") {
         return
       }
-
-    } finally {
       setIsLoading(false)
-    }
+
+    } 
   }, [token])
 
   useEffect(() => {
@@ -59,6 +56,7 @@ export default function ProjectListPage() {
   }, [fetchProjects, logout, token])
 
   const content = useMemo(() => {
+    console.log(isLoading)
     if (isLoading) {
       return (
         <div className="flex min-h-[160px] items-center justify-center rounded-xl border bg-muted/30 text-sm text-muted-foreground">
@@ -83,7 +81,7 @@ export default function ProjectListPage() {
     <div className="flex min-h-screen items-center justify-center bg-background">
       <div className="w-full max-w-6xl space-y-6 p-4">
         <div className="flex justify-end">
-          <AddButton onCreated={() => { void fetchProjects() }} />
+          <AddButton onCreated={() => { void fetchProjects(undefined, true) }} />
         </div>
         {content}
       </div>

@@ -4,7 +4,7 @@ import ActivityTable from "./ActivityTable"
 import { ProjectTable } from "./ProjectTable"
 import VerticalActivityStepper from "./VerticalActivityStepper"
 import { useAuth } from "../auth/AuthContext"
-import { apiFetch, ApiError } from "@/lib/api"
+import { apiFetch} from "@/lib/api"
 import { mapProjectResponse, type ProjectApiResponse } from "@/lib/projectApi"
 import { type ProjectListItem } from "@/types/project"
 
@@ -38,16 +38,9 @@ export default function Dashboard() {
           return
         }
 
-        if (caughtError instanceof ApiError && caughtError.status === 401) {
-          logout()
-        }
 
-        const message =
-          caughtError instanceof ApiError
-            ? caughtError.message
-            : caughtError instanceof Error
-              ? caughtError.message
-              : "Gagal memuat data proyek"
+
+        const message = "Gagal memuat data proyek"
 
         setError(message)
         setProjects([])

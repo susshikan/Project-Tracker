@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from "react"
 
-import { ApiError, apiFetch } from "@/lib/api"
+import { apiFetch } from "@/lib/api"
 
 const AUTH_STORAGE_KEY = "project-tracker.token"
 const LEGACY_AUTH_KEY = "project-tracker.authenticated"
@@ -94,12 +94,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const tokenValue = await fetchLoginToken({ email, password })
       setToken(tokenValue)
     } catch (error) {
-      const message =
-        error instanceof ApiError
-          ? error.message
-          : error instanceof Error
-            ? error.message
-            : "Login gagal"
+      const message = "Login gagal"
 
       setAuthError(message)
       throw error
@@ -122,12 +117,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const tokenValue = await fetchLoginToken({ email, password })
         setToken(tokenValue)
       } catch (error) {
-        const message =
-          error instanceof ApiError
-            ? error.message
-            : error instanceof Error
-              ? error.message
-              : "Registrasi gagal"
+        const message = "Registrasi gagal"
 
         setAuthError(message)
         throw error

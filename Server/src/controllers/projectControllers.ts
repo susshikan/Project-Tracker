@@ -10,12 +10,14 @@ interface ProjectParam{
 
 interface CreateProjectBody {
     title: string;
+    description: string
     deadline: Date;
     status: boolean;
 }
 
 interface UpdateProjectBody {
     title?: string;
+    description?: string
     status?: boolean;
     deadline?: Date;
 }
@@ -78,12 +80,14 @@ export async function createProject(req: Request<{}, {}, CreateProjectBody>, res
         return res.status(401).json({ message: "Unauthorized" })
     }
     const title = (req.body?.title ?? "").trim()
+    const description = (req.body?.description ?? "").trim()
     const deadline = new Date(req.body.deadline);
     const status: boolean = Boolean(req.body.status)
 
     if (!title) {
         return res.status(400).json({ message: "title wajib diisi" })
     }
+
 
     try {
         const updateUser = await prisma.user.update({
@@ -99,6 +103,7 @@ export async function createProject(req: Request<{}, {}, CreateProjectBody>, res
         const newProject = await prisma.project.create({
             data: {
                 localId: updateUser.totalProject,
+                description: description || undefined,
                 title,
                 userId: reqProject.user.id,
                 totalCommit: 0,
@@ -125,7 +130,7 @@ export async function updateProject(req: Request<ProjectParam, {}, UpdateProject
         return res.status(400).json({ message: "Id project tidak valid" })
     }
 
-    const updateData: { title?: string, deadline?: Date, status?: boolean } = {}
+    const updateData: { title?: string, deadline?: Date, status?: boolean, description?: string } = {}
 
     if (req.body?.title !== undefined) {
         const newTitle = req.body.title.trim()
@@ -134,6 +139,15 @@ export async function updateProject(req: Request<ProjectParam, {}, UpdateProject
         }
         updateData.title = newTitle
     }
+
+    if (req.body?.description !== undefined) {
+        const newDescription = req.body.description.trim()
+        if (!newDescription) {
+            return res.status(400).json({ message: "Description wajib diisi" })
+        }
+        updateData.title = newDescription
+    }
+
 
     if (req.body?.status !== undefined) {
         const newStatus = Boolean(req.body.status)

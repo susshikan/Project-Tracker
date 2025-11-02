@@ -28,6 +28,7 @@ model Project {
   id Int @id @default(autoincrement())
   localId Int
   title String
+  description String @default("No Description")
   createAt DateTime @default(now())
   userId Int
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)

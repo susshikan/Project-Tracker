@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 
 import { apiFetch } from "@/lib/api"
 import { mapProjectResponse, type ProjectApiResponse } from "@/lib/projectApi"
@@ -14,6 +14,37 @@ export default function ProjectListPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const fetchProjects = useCallback(async (signal?: AbortSignal) => {
+    if (!token) {
+      setProjects([]) 
+      return
+    }
+
+    if (projects.length != 0) {
+      
+    } else {
+      setIsLoading(true)
+      setError(null)
+    }
+
+
+    try {
+      const response = await apiFetch<ProjectApiResponse>("/projects", {
+        token,
+        signal,
+      })
+
+      setProjects(mapProjectResponse(response))
+    } catch (caughtError) {
+      if (caughtError instanceof DOMException && caughtError.name === "AbortError") {
+        return
+      }
+
+    } finally {
+      setIsLoading(false)
+    }
+  }, [token])
+
   useEffect(() => {
     if (!token) {
       setProjects([])
@@ -22,31 +53,10 @@ export default function ProjectListPage() {
 
     const controller = new AbortController()
 
-    const fetchProjects = async () => {
-      setIsLoading(true)
-      setError(null)
-
-      try {
-        const response = await apiFetch<ProjectApiResponse>("/projects", {
-          token,
-          signal: controller.signal,
-        })
-
-        setProjects(mapProjectResponse(response))
-      } catch (caughtError) {
-        if (caughtError instanceof DOMException && caughtError.name === "AbortError") {
-          return
-        }
-
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    void fetchProjects()
+    void fetchProjects(controller.signal)
 
     return () => controller.abort()
-  }, [logout, token])
+  }, [fetchProjects, logout, token])
 
   const content = useMemo(() => {
     if (isLoading) {
@@ -73,7 +83,7 @@ export default function ProjectListPage() {
     <div className="flex min-h-screen items-center justify-center bg-background">
       <div className="w-full max-w-6xl space-y-6 p-4">
         <div className="flex justify-end">
-          <AddButton />
+          <AddButton onCreated={() => { void fetchProjects() }} />
         </div>
         {content}
       </div>

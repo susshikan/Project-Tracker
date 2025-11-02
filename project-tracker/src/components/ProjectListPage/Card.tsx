@@ -1,40 +1,67 @@
-"use client"
+import { Line, LineChart, XAxis } from "recharts"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import { type ProjectListItem } from "@/types/project"
 
-import { Calendar, Clock } from "lucide-react"
-
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-
-type CardProjectProps = {
-  projectName: string
-  status: string
-  deadline: string
-  lastCommit: string
+type CommitData = {
+  date: string
+  count: number
 }
 
-export function CardProject({ projectName, status, deadline, lastCommit }: CardProjectProps) {
-  const isDone = status.toLowerCase() === "done"
-  const badgeVariant: "default" | "secondary" = isDone ? "default" : "secondary"
+const chartConfig = {
+  commits: {
+    label: "Commits",
+    color: "var(--chart-1)",
+  },
+} satisfies ChartConfig
+
+export function CardProject(props: ProjectListItem) {
+  const today = new Date()
+  const last5Days: string[] = []
+  for (let i = 4; i >= 0; i--) {
+    const d = new Date(today)
+    d.setDate(today.getDate() - i)
+    last5Days.push(d.toISOString().split("T")[0]) 
+  }
+
+  const commitCountMap: Record<string, number> = {}
+  props.commits.forEach((commit) => {
+    const date = new Date(commit.createAt).toISOString().split("T")[0]
+    commitCountMap[date] = (commitCountMap[date] || 0) + 1
+  })
+
+  const chartData: CommitData[] = last5Days.map((day) => ({
+    date: day,
+    count: commitCountMap[day] || 0,
+  }))
 
   return (
-    <Card className="flex h-full flex-col justify-between border border-white/10 bg-white/60 backdrop-blur-xl dark:bg-zinc-900/40">
-      <CardHeader className="space-y-3">
-        <div className="flex items-center justify-between gap-2">
-          <CardTitle className="text-lg font-semibold">{projectName}</CardTitle>
-          <Badge variant={badgeVariant} className="capitalize">
-            {status}
-          </Badge>
-        </div>
+    <Card className="aspect-square flex flex-col">
+      <CardHeader className="">
+        <CardTitle className="text-2xl">{props.projectName}</CardTitle>
+        <CardDescription>Last 5 days</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-3 text-sm text-muted-foreground">
-        <div className="flex items-center gap-2">
-          <Calendar className="h-4 w-4" />
-          <span>Deadline: {deadline}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <Clock className="h-4 w-4" />
-          <span>Last update: {lastCommit}</span>
-        </div>
+      <CardContent className="flex-1">
+        <ChartContainer config={chartConfig}>
+          <LineChart
+            accessibilityLayer
+            data={chartData}
+            margin={{ left: 12, right: 12, top: 12, bottom: 5 }}
+          >
+
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel />}
+            />
+            <Line
+              type="monotone"
+              dataKey="count"
+              stroke="var(--chart-1)"
+              strokeWidth={2}
+              dot={false}
+            />
+          </LineChart>
+        </ChartContainer>
       </CardContent>
     </Card>
   )

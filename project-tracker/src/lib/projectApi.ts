@@ -6,9 +6,17 @@ type ProjectApiItem = {
   title: string
   status: boolean
   deadline: string | null
-  updatedAt?: string | null
   createAt?: string | null
-  createdAt?: string | null
+  commit?: CommitApiItem[]
+}
+
+type CommitApiItem = {
+  id: number
+  localId: number
+  message: string
+  createAt: string | Date
+  projectLocalId: number
+  userId: number
 }
 
 export type ProjectApiResponse = {
@@ -28,13 +36,32 @@ function formatDate(value: string | Date | null | undefined) {
   return date.toLocaleDateString()
 }
 
+function toISODate(value: string | Date | null | undefined): string {
+  if (!value) return "-"
+  const date = value instanceof Date ? value : new Date(value)
+  if (Number.isNaN(date.getTime())) return "-"
+  return date.toISOString().split("T")[0] 
+}
+
+
+function normalizeCommit(commit: CommitApiItem) {
+  return {
+    id: commit.id,
+    localId: commit.localId,
+    message: commit.message,
+    createAt: toISODate(commit.createAt),
+    projectLocalId: commit.projectLocalId,
+    userId: commit.userId
+  }
+}
+
 function normalizeProject(project: ProjectApiItem): ProjectListItem {
   return {
-    id: project.localId ?? project.id,
+    localId: project.localId ?? project.id,
     projectName: project.title,
     status: project.status ? "Done" : "In Progress",
-    lastCommit: formatDate(project.updatedAt ?? project.createAt ?? project.createdAt ?? null),
     deadline: formatDate(project.deadline),
+    commits: (project.commit ?? []).map(normalizeCommit)
   }
 }
 

@@ -22,11 +22,12 @@ export default function TableCard({ projects }: TableCardProps) {
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {projects.map((project) => (
         <CardProject
-          key={project.id}
+          key={project.localId}
+          localId={project.localId}
           projectName={project.projectName}
           status={project.status}
           deadline={formatValue(project.deadline)}
-          lastCommit={formatValue(project.lastCommit)}
+          commits={project.commits}
         />
       ))}
     </div>

@@ -1,11 +1,20 @@
 import { z } from "zod"
 
-export const projectSchema = z.object({
+const commitSchema = z.object({
   id: z.number(),
+  localId: z.number(),
+  message: z.string(),
+  createAt: z.string(),
+  projectLocalId: z.number(),
+  userId: z.number()
+})
+
+export const projectSchema = z.object({
+  localId: z.number(),
   projectName: z.string(),
   status: z.string(),
-  lastCommit: z.string(),
   deadline: z.string(),
+  commits: z.array(commitSchema)
 })
 
 export type ProjectListItem = z.infer<typeof projectSchema>

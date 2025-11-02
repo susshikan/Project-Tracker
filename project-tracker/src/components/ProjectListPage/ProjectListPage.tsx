@@ -6,7 +6,7 @@ import { type ProjectListItem } from "@/types/project"
 
 import { useAuth } from "../auth/AuthContext"
 import { AddButton } from "./AddButton"
-import TableCard from "./TableCard"
+import TableCard from "./tableCard"
 
 export default function ProjectListPage() {
   const { token, logout } = useAuth()
@@ -76,7 +76,8 @@ export default function ProjectListPage() {
           {error}
         </div>
       )
-    }
+    }   
+    console.log(projects)
 
     return <TableCard projects={projects} />
   }, [error, isLoading, projects])

@@ -95,40 +95,50 @@ export function CommitTable({data}: {data: CommitsListItem[]}) {
         onPaginationChange: setPagination,
     })
   return (
-    <div>
-        <Table className="max-w-[550px]">
-        <TableHeader className="bg-muted/50">
-            <TableRow>
-            <TableHead className="w-[100px]">Invoice</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Method</TableHead>
-            <TableHead className="text-right">Amount</TableHead>
-            </TableRow>
-        </TableHeader>
-        <TableBody>
-            {invoices.map((invoice) => (
-            <TableRow key={invoice.invoice}>
-                <TableCell className="font-medium">{invoice.invoice}</TableCell>
-                <TableCell>{invoice.paymentStatus}</TableCell>
-                <TableCell>{invoice.paymentMethod}</TableCell>
-                <TableCell className="text-right">{invoice.totalAmount}</TableCell>
-            </TableRow>
-            ))}
-        </TableBody>
-        </Table>
-        <div className="flex items-center justify-between border-t bg-muted/20 p-3">
+    <div className="w-full overflow-hidden rounded-xl border">
+          <Table>
+            <TableHeader className="bg-muted/50">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id}>{flexRender(header.column.columnDef.header, header.getContext())}</TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+    
+            <TableBody>
+              {table.getRowModel().rows.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow key={row.id}>
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className="h-24 text-center">
+                    No commits found.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+    
+          <div className="flex items-center justify-between border-t bg-muted/20 p-3">
             <div className="text-xs text-muted-foreground">
-            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount() || 1}
+              Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount() || 1}
             </div>
             <div className="flex gap-2">
-            <Button variant="outline" size="icon" disabled={!table.getCanPreviousPage()} onClick={() => table.previousPage()}>
+              <Button variant="outline" size="icon" disabled={!table.getCanPreviousPage()} onClick={() => table.previousPage()}>
                 <IconChevronLeft className="size-4" />
-            </Button>
-            <Button variant="outline" size="icon" disabled={!table.getCanNextPage()} onClick={() => table.nextPage()}>
+              </Button>
+              <Button variant="outline" size="icon" disabled={!table.getCanNextPage()} onClick={() => table.nextPage()}>
                 <IconChevronRight className="size-4" />
-            </Button>
+              </Button>
             </div>
-      </div>
-    </div>
+          </div>
+        </div>
   )
 }

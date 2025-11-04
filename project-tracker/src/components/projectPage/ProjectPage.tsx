@@ -3,7 +3,8 @@ import { CommitTable } from "./CommitTable"
 import { useEffect, useState, useCallback, useMemo } from "react"
 import { apiFetch } from "@/lib/api"
 import { useAuth } from "../auth/AuthContext"
-
+import type { CommitApiResponse } from "@/lib/projectApi"
+import { mapCommitsResponse } from "@/lib/projectApi"
 
 
 export default function ProjectPage(){
@@ -22,8 +23,8 @@ export default function ProjectPage(){
         try {
             setIsLoading(true)
             setError(null)
-            const data = await apiFetch<any[]>('/projects/'+id+"/commits", {token, signal})
-            setCommits(data.data)
+            const data = await apiFetch<CommitApiResponse>('/projects/'+id+"/commits", {token, signal})
+            setCommits(mapCommitsResponse(data))
             console.log(data)
         } catch (error: any) {
             if (error.name == "AbortError") {

@@ -23,6 +23,10 @@ export type ProjectApiResponse = {
   data?: ProjectApiItem[]
 }
 
+export type CommitApiResponse = {
+  data?: CommitApiItem[]
+}
+
 function formatDate(value: string | Date | null | undefined) {
   if (!value) {
     return "-"
@@ -67,4 +71,8 @@ function normalizeProject(project: ProjectApiItem): ProjectListItem {
 
 export function mapProjectResponse(response: ProjectApiResponse | null | undefined): ProjectListItem[] {
   return (response?.data ?? []).map(normalizeProject)
+}
+
+export function mapCommitsResponse(response: CommitApiResponse | null | undefined): CommitApiItem[] {
+  return (response?.data ?? []).map(normalizeCommit)
 }

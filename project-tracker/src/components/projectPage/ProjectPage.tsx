@@ -5,14 +5,15 @@ import { EditProjectButton } from "./EditProjectButton"
 import { useEffect, useState, useCallback, useMemo } from "react"
 import { apiFetch } from "@/lib/api"
 import { useAuth } from "../auth/AuthContext"
-import type { CommitApiResponse } from "@/lib/projectApi"
-import { mapCommitsResponse } from "@/lib/projectApi"
+import type { CommitApiResponse, ProjectApiItem, ProjectApiResponse, ProjectApiResponseById } from "@/lib/projectApi"
+import { mapCommitsResponse, mapProjectResponseById, normalizeProject, normalizeProjectById } from "@/lib/projectApi"
 
 
 export default function ProjectPage(){
     const {id} = useParams()
     const {token} = useAuth()
     const [commits, setCommits] = useState<any[]>([])
+    const [projects, setProjects] = useState<any>()
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string|null>(null)
 
@@ -30,9 +31,12 @@ export default function ProjectPage(){
         }
 
         try {
-            const data = await apiFetch<CommitApiResponse>('/projects/'+id+"/commits", {token, signal})
-            setCommits(mapCommitsResponse(data))
-            console.log(data)
+            const data = await apiFetch<ProjectApiResponseById>('/projects/'+id, {token, signal})
+            let normalizeData = mapProjectResponseById(data);
+            console.log(normalizeData)
+            setProjects(normalizeData)
+            setCommits(normalizeData.commits)
+            
         } catch (error: any) {
             if (error.name == "AbortError") {
                 return
@@ -51,7 +55,6 @@ export default function ProjectPage(){
     }, [fetchCommits])
 
     const content = useMemo(() => {
-       console.log(isLoading)
        if (isLoading) {
          return (
            <div className="flex min-h-[160px] items-center justify-center rounded-xl border bg-muted/30 text-sm text-muted-foreground">
@@ -73,6 +76,8 @@ export default function ProjectPage(){
 
     return (
         <div>
+            <h1>{projects?.projectName}</h1>
+            <div>{projects?.description}</div>
             <div>
                 {content}
             </div>

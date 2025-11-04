@@ -59,7 +59,6 @@ export default function ProjectListPage() {
   }, [fetchProjects, logout, token])
 
   const content = useMemo(() => {
-    console.log(isLoading)
     if (isLoading) {
       return (
         <div className="flex min-h-[160px] items-center justify-center rounded-xl border bg-muted/30 text-sm text-muted-foreground">
@@ -75,7 +74,7 @@ export default function ProjectListPage() {
         </div>
       )
     }   
-    console.log(projects)
+
 
     return <TableCard projects={projects} />
   }, [error, isLoading, projects])

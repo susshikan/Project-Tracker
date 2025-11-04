@@ -1,6 +1,6 @@
 import { type ProjectListItem } from "@/types/project"
 
-type ProjectApiItem = {
+export type ProjectApiItem = {
   id: number
   localId: number | null
   title: string
@@ -17,6 +17,10 @@ type CommitApiItem = {
   createAt: string | Date
   projectLocalId: number
   userId: number
+}
+
+export type ProjectApiResponseById = {
+  data?: ProjectApiItem
 }
 
 export type ProjectApiResponse = {
@@ -59,7 +63,17 @@ function normalizeCommit(commit: CommitApiItem) {
   }
 }
 
-function normalizeProject(project: ProjectApiItem): ProjectListItem {
+export function normalizeProject(project: ProjectApiItem): ProjectListItem {
+  return {
+    localId: project.localId ?? project.id,
+    projectName: project.title,
+    status: project.status ? "Done" : "In Progress",
+    deadline: formatDate(project.deadline),
+    commits: (project.commit ?? []).map(normalizeCommit)
+  }
+}
+
+export function normalizeProjectById(project: ProjectApiItem): ProjectListItem {
   return {
     localId: project.localId ?? project.id,
     projectName: project.title,
@@ -71,8 +85,16 @@ function normalizeProject(project: ProjectApiItem): ProjectListItem {
 
 export function mapProjectResponse(response: ProjectApiResponse | null | undefined): ProjectListItem[] {
   return (response?.data ?? []).map(normalizeProject)
-}
+} 
 
 export function mapCommitsResponse(response: CommitApiResponse | null | undefined): CommitApiItem[] {
   return (response?.data ?? []).map(normalizeCommit)
+}
+
+export function mapProjectResponseById(response: ProjectApiResponseById | null | undefined): ProjectListItem {
+  const project = response?.data
+  if (!project) {
+    throw new Error("Invalid response: missing project data")
+  }
+  return normalizeProjectById(project)
 }

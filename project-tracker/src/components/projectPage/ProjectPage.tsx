@@ -76,15 +76,18 @@ export default function ProjectPage(){
 
     return (
         <div>
-            <h1>{projects?.projectName}</h1>
-            <div>{projects?.description}</div>
+            {!isLoading && 
             <div>
-                {content}
-            </div>
-            <div>
-                <AddCommitButton param={id} onCreated={() => fetchCommits(undefined, true)}/>
-                <EditProjectButton param={id} onCreated={() => fetchCommits(undefined, true)} data={projects}/>
-            </div>
+                <h1>{projects?.projectName}</h1>
+                <div>{projects?.description}</div>
+                <div>
+                    {content}
+                </div>
+                <div>
+                    <AddCommitButton param={id} onCreated={() => fetchCommits(undefined, true)}/>
+                    <EditProjectButton param={id} onCreated={() => fetchCommits(undefined, true)} data={projects}/>
+                </div>
+            </div>}
         </div>
     )
 }

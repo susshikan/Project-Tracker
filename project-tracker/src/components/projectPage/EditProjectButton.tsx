@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { PencilOff, CalendarIcon  } from "lucide-react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
@@ -35,21 +36,24 @@ export function EditProjectButton({ onCreated, param, data }: AddButtonProps) {
     const [form, setForm] = React.useState<{
         title: string
         description: string
-        deadline: Date | undefined 
+        deadline: Date | undefined
+        status: "In Progress" | "Done"
     }>({
-        title: data?.projectName,
-        description: data?.description,
-        deadline: data?.deadline,
+        title: data?.projectName ?? "",
+        description: data?.description ?? "",
+        deadline: data?.deadline ? new Date(data.deadline) : undefined,
+        status: data?.status === "Done" ? "Done" : "In Progress",
     })
 
     const resetForm = React.useCallback(() => {
         setForm({
-        title: data?.projectName,
-        description: data?.description,
-        deadline: data?.deadline,
+        title: data?.projectName ?? "",
+        description: data?.description ?? "",
+        deadline: data?.deadline ? new Date(data.deadline) : undefined,
+        status: data?.status === "Done" ? "Done" : "In Progress",
         })
         setError(null)
-    }, [])
+    }, [data])
 
     const handleOpenChange = (nextOpen: boolean) => {
         if (!nextOpen) {
@@ -70,6 +74,13 @@ export function EditProjectButton({ onCreated, param, data }: AddButtonProps) {
         setForm((prev) => ({
         ...prev,
         deadline: selected,
+        }))
+    }
+
+    const handleStatusChange = (nextStatus: string) => {
+        setForm((prev) => ({
+        ...prev,
+        status: nextStatus === "Done" ? "Done" : "In Progress",
         }))
     }
 
@@ -98,9 +109,9 @@ export function EditProjectButton({ onCreated, param, data }: AddButtonProps) {
             token,
             body: {
             title,
-            description: description || undefined,
+            description: description,
             deadline: form.deadline?.toISOString(),
-            status: false,
+            status: form.status === "Done",
             },
         })
 
@@ -149,6 +160,29 @@ export function EditProjectButton({ onCreated, param, data }: AddButtonProps) {
                 onChange={handleInputChange("description")}
                 disabled={isSaving}
                 />
+            </div>
+            <div className="grid gap-3">
+                <Label htmlFor="project-status">Status</Label>
+                <RadioGroup
+                id="project-status"
+                value={form.status}
+                onValueChange={handleStatusChange}
+                className="grid gap-2 sm:grid-cols-2"
+                disabled={isSaving}
+                >
+                <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="In Progress" id="status-in-progress" disabled={isSaving} />
+                    <Label htmlFor="status-in-progress" className="font-normal">
+                    In Progress
+                    </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="Done" id="status-done" disabled={isSaving} />
+                    <Label htmlFor="status-done" className="font-normal">
+                    Done
+                    </Label>
+                </div>
+                </RadioGroup>
             </div>
             <div className="grid gap-2">
                 <Label htmlFor="project-deadline">Deadline</Label>

@@ -145,7 +145,7 @@ export async function updateProject(req: Request<ProjectParam, {}, UpdateProject
         if (!newDescription) {
             return res.status(400).json({ message: "Description wajib diisi" })
         }
-        updateData.title = newDescription
+        updateData.description = newDescription
     }
 
 

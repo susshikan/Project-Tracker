@@ -25,6 +25,7 @@ export default function TableCard({ projects }: TableCardProps) {
           key={project.localId}
           localId={project.localId}
           projectName={project.projectName}
+          description={project.description}
           status={project.status}
           deadline={formatValue(project.deadline)}
           commits={project.commits}

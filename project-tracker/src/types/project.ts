@@ -1,3 +1,4 @@
+import { description } from "@/components/dashboard/ChartProject"
 import { z } from "zod"
 
 const commitSchema = z.object({
@@ -14,6 +15,7 @@ export const projectSchema = z.object({
   projectName: z.string(),
   status: z.string(),
   deadline: z.string(),
+  description: z.string(),
   commits: z.array(commitSchema)
 })
 

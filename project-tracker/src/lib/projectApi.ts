@@ -7,6 +7,7 @@ export type ProjectApiItem = {
   status: boolean
   deadline: string | null
   createAt?: string | null
+  description: string
   commit?: CommitApiItem[]
 }
 
@@ -69,6 +70,7 @@ export function normalizeProject(project: ProjectApiItem): ProjectListItem {
     projectName: project.title,
     status: project.status ? "Done" : "In Progress",
     deadline: formatDate(project.deadline),
+    description: project.description,
     commits: (project.commit ?? []).map(normalizeCommit)
   }
 }
@@ -79,6 +81,7 @@ export function normalizeProjectById(project: ProjectApiItem): ProjectListItem {
     projectName: project.title,
     status: project.status ? "Done" : "In Progress",
     deadline: formatDate(project.deadline),
+    description: project.description,
     commits: (project.commit ?? []).map(normalizeCommit)
   }
 }

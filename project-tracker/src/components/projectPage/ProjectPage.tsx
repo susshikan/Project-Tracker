@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom"
 import { CommitTable } from "./CommitTable"
 import { AddCommitButton } from "./AddCommitButton"
+import { EditProjectButton } from "./EditProjectButton"
 import { useEffect, useState, useCallback, useMemo } from "react"
 import { apiFetch } from "@/lib/api"
 import { useAuth } from "../auth/AuthContext"
@@ -77,6 +78,7 @@ export default function ProjectPage(){
             </div>
             <div>
                 <AddCommitButton param={id} onCreated={() => fetchCommits(undefined, true)}/>
+                <EditProjectButton />
             </div>
         </div>
     )

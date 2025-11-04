@@ -10,20 +10,25 @@ import { mapCommitsResponse } from "@/lib/projectApi"
 
 export default function ProjectPage(){
     const {id} = useParams()
-    console.log(id)
     const {token} = useAuth()
     const [commits, setCommits] = useState<any[]>([])
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string|null>(null)
 
-    const fetchCommits = useCallback(async (signal?: AbortSignal) => {
+    const fetchCommits = useCallback(async (signal?: AbortSignal, keepCommit = false) => {
         if (!token) {
             setCommits([])
             return
         }
-        try {
+        if (keepCommit) {
+            setIsLoading(false)
+            setError(null)
+        } else{
             setIsLoading(true)
             setError(null)
+        }
+
+        try {
             const data = await apiFetch<CommitApiResponse>('/projects/'+id+"/commits", {token, signal})
             setCommits(mapCommitsResponse(data))
             console.log(data)
@@ -71,7 +76,7 @@ export default function ProjectPage(){
                 {content}
             </div>
             <div>
-                <AddCommitButton param={id} onCreated={() => fetchCommits}/>
+                <AddCommitButton param={id} onCreated={() => fetchCommits(undefined, true)}/>
             </div>
         </div>
     )

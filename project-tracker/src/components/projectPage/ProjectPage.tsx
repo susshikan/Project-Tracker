@@ -83,7 +83,7 @@ export default function ProjectPage(){
             </div>
             <div>
                 <AddCommitButton param={id} onCreated={() => fetchCommits(undefined, true)}/>
-                <EditProjectButton />
+                <EditProjectButton param={id} onCreated={() => fetchCommits(undefined, true)} data={projects}/>
             </div>
         </div>
     )

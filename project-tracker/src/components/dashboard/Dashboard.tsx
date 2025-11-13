@@ -5,13 +5,14 @@ import { ProjectTable } from "./ProjectTable"
 import VerticalActivityStepper from "./VerticalActivityStepper"
 import { useAuth } from "../auth/AuthContext"
 import { apiFetch} from "@/lib/api"
-import { mapProjectResponse, convertNormalizedProjectsToHeatmapValues, type ProjectApiResponse, type CountMap } from "@/lib/projectApi"
-import { type ProjectListItem } from "@/types/project"
+import { mapProjectResponse, convertNormalizedProjectsToHeatmapValues,convertProjectToCommit, type ProjectApiResponse, type CountMap, type CommitApiResponse } from "@/lib/projectApi"
+import { type ProjectListItem, type CommitsListItem } from "@/types/project"
 
 export default function Dashboard() {
   const { token, logout } = useAuth()
   const [projects, setProjects] = useState<ProjectListItem[]>([])
   const [heatMap, setHeatMap] = useState<CountMap>()
+  const [commits, setCommits] = useState<CommitsListItem[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -34,6 +35,9 @@ export default function Dashboard() {
         })
         const project = mapProjectResponse(response)
         const heatmapData = convertNormalizedProjectsToHeatmapValues(project)
+        const getcommits = convertProjectToCommit(project) 
+        console.log(getcommits)
+        setCommits(getcommits)
         setHeatMap(heatmapData)
         setProjects(project)
       } catch (caughtError) {
@@ -83,7 +87,7 @@ export default function Dashboard() {
       {/* grid utama: sidebar kiri + konten kanan */}
       <div className="grid grid-cols-[280px_1fr] gap-6 h-full">
         {/* Left Pane */}
-        <VerticalActivityStepper />
+        <VerticalActivityStepper data={commits}/>
         {/* Right Pane */}
         <main className="flex flex-col gap-6">
           {/* Top row: 2 cards sejajar */}

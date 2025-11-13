@@ -1,4 +1,4 @@
-import { type ProjectListItem } from "@/types/project"
+import { type ProjectListItem, type CommitsListItem } from "@/types/project"
 
 export type ProjectApiItem = {
   id: number
@@ -88,7 +88,8 @@ export function normalizeProjectById(project: ProjectApiItem): ProjectListItem {
 
 export type CountMap = Record<string, number>
 
-export function convertNormalizedProjectsToHeatmapValues(projects: ProjectListItem[]): CountMap {const values: CountMap = {}
+export function convertNormalizedProjectsToHeatmapValues(projects: ProjectListItem[]): CountMap {
+  const values: CountMap = {}
   projects.forEach((project) => {
     project.commits.forEach((c) => {
       const dateKey = c.createAt 
@@ -102,6 +103,14 @@ export function convertNormalizedProjectsToHeatmapValues(projects: ProjectListIt
   })
 
   return values
+}
+
+export function convertProjectToCommit(projects: ProjectListItem[]): CommitsListItem[]{
+  let result: any = []
+  projects.forEach((project) => {
+    result = [...result, ...project.commits]
+  })
+  return result
 }
 
 

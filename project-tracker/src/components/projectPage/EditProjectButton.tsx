@@ -129,7 +129,7 @@ export function EditProjectButton({ onCreated, param, data }: AddButtonProps) {
     return (
         <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogTrigger asChild>
-            <Button variant="outline" size="icon">
+            <Button variant="outline" className="p-5">
             <PencilOff />
             </Button>
         </DialogTrigger>

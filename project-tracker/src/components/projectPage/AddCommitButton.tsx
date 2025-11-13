@@ -92,7 +92,7 @@ export function AddCommitButton({ onCreated, param }: AddButtonProps) {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="icon">
+        <Button variant="outline" className="p-5 w-50">
           <CirclePlus />
         </Button>
       </DialogTrigger>

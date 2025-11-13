@@ -75,17 +75,21 @@ export default function ProjectPage(){
      }, [error, isLoading, commits])
 
     return (
-        <div>
+        <div className="p-9">
             {!isLoading && 
             <div>
-                <h1>{projects?.projectName}</h1>
-                <div>{projects?.description}</div>
-                <div>
-                    {content}
+                <div className="grid grid-cols-3 gap-2">
+                    <div className="col-span-1">
+                        <h1 className="text-4xl">{projects?.projectName}</h1>
+                        <div>{projects?.description}</div>
+                    </div>
+                    <div className="col-span-2">
+                        {content}
+                    </div>
                 </div>
-                <div>
-                    <AddCommitButton param={id} onCreated={() => fetchCommits(undefined, true)}/>
+                <div className="flex justify-between mt-5">
                     <EditProjectButton param={id} onCreated={() => fetchCommits(undefined, true)} data={projects}/>
+                    <AddCommitButton param={id} onCreated={() => fetchCommits(undefined, true)}/>
                 </div>
             </div>}
         </div>

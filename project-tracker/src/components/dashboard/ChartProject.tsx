@@ -13,31 +13,25 @@ import {
 import type {
   ChartConfig,
 } from "@/components/ui/chart"
-import {ChartContainer,ChartTooltip, ChartTooltipContent} from "@/components/ui/chart" 
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 
 export const description = "A donut chart with an active sector"
 
-const chartData = [
-  { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
-  { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-]
+export function ChartProject({projects}: {projects: any}) {
+  console.log(projects)
+  const ongoing = projects.filter((p: { status: string }) => p.status === 'In Progress').length;
+  const done = projects.filter((p: { status: string }) => p.status === 'Done').length;
+  console.log(ongoing)
+  const chartData = [
+    { status: "On Going", count: ongoing, fill: "var(--chart-1)" },
+    { status: "Done", count: done, fill: "var(--chart-2)" }
+  ];
 
-const chartConfig = {
-  visitors: {
-    label: "Visitors",
-  },
-  chrome: {
-    label: "Chrome",
-    color: "var(--chart-1)",
-  },
-  safari: {
-    label: "Safari",
-    color: "var(--chart-2)"
-  }
-
-} satisfies ChartConfig
-
-export function ChartProject() {
+  const chartConfig = {
+    count: { label: "Project" },
+    "On Going": { label: "On Going", color: "var(--chart-1)" },
+    "Done": { label: "Done", color: "var(--chart-2)" },
+  };
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
@@ -56,8 +50,8 @@ export function ChartProject() {
             />
             <Pie
               data={chartData}
-              dataKey="visitors"
-              nameKey="browser"
+              dataKey="count"
+              nameKey="status"
               innerRadius={60}
               strokeWidth={5}
               activeIndex={0}
@@ -73,10 +67,10 @@ export function ChartProject() {
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
         <div className="flex items-center gap-2 leading-none font-medium">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+          
         </div>
         <div className="text-muted-foreground leading-none">
-          Showing total visitors for the last 6 months
+          Showing total status Project in last 6 month
         </div>
       </CardFooter>
     </Card>

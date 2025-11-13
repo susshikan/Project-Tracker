@@ -36,7 +36,7 @@ export default function Dashboard() {
         const project = mapProjectResponse(response)
         const heatmapData = convertNormalizedProjectsToHeatmapValues(project)
         const getcommits = convertProjectToCommit(project) 
-        console.log(getcommits)
+        console.log(project)
         setCommits(getcommits)
         setHeatMap(heatmapData)
         setProjects(project)
@@ -93,7 +93,7 @@ export default function Dashboard() {
           {/* Top row: 2 cards sejajar */}
           <div className="grid grid-cols-[4fr_6fr] gap-6">
             <div className="max-h-[60vh]">
-                <ChartProject />
+                <ChartProject projects={projects}/>
             </div>
             <div className="max-h-[50vh]">
                 <ActivityTable data={heatMap}/>

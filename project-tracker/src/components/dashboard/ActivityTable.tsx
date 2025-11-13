@@ -188,34 +188,20 @@ export function GrayscaleHeatmap({
   )
 }
 
-// Helper functions for mock data
-function generateMockValues(start: Date, end: Date): CountMap {
-  const values: CountMap = {}
-  const s = startOfDay(start)
-  const e = startOfDay(end)
-  for (let d = new Date(s); d <= e; d = addDays(d, 1)) {
-    const r = Math.random()
-    const val = r < 0.5 ? 0 : r < 0.8 ? 1 + Math.floor(Math.random() * 3) : 4 + Math.floor(Math.random() * 6)
-    values[toKey(d)] = val
-  }
-  return values
-}
-
-export default function ActivityTable() {
+export default function ActivityTable({data}: {data: any}) {
   const end = startOfDay(new Date())
   const start = addDays(end, -7 * 35 + 1)
-  const data = useMemo(() => generateMockValues(start, end), [])
 
   return (
-    
-      <div className="w-full max-w-4xl">
-        
 
-        <div className="rounded-2xl p-4 border border-white/10 bg-white/60 backdrop-blur-xl dark:bg-zinc-900/40 shadow-sm">
+    <div className="w-full max-w-4xl">
+
+
+      <div className="rounded-2xl p-4 border border-white/10 bg-white/60 backdrop-blur-xl dark:bg-zinc-900/40 shadow-sm">
         <h1 className="text-2xl font-bold mb-2 text-zinc-900 dark:text-zinc-100">Commit Activity</h1>
-          <GrayscaleHeatmap startDate={start} endDate={end} values={data} />
-        </div>
+        <GrayscaleHeatmap startDate={start} endDate={end} values={data} />
       </div>
-    
+    </div>
+
   )
 }

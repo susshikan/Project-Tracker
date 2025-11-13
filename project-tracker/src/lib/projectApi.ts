@@ -86,6 +86,25 @@ export function normalizeProjectById(project: ProjectApiItem): ProjectListItem {
   }
 }
 
+export type CountMap = Record<string, number>
+
+export function convertNormalizedProjectsToHeatmapValues(projects: ProjectListItem[]): CountMap {const values: CountMap = {}
+  projects.forEach((project) => {
+    project.commits.forEach((c) => {
+      const dateKey = c.createAt 
+
+      if (!values[dateKey]) {
+        values[dateKey] = 0
+      }
+
+      values[dateKey] += 1
+    })
+  })
+
+  return values
+}
+
+
 export function mapProjectResponse(response: ProjectApiResponse | null | undefined): ProjectListItem[] {
   return (response?.data ?? []).map(normalizeProject)
 } 

@@ -5,12 +5,13 @@ import { ProjectTable } from "./ProjectTable"
 import VerticalActivityStepper from "./VerticalActivityStepper"
 import { useAuth } from "../auth/AuthContext"
 import { apiFetch} from "@/lib/api"
-import { mapProjectResponse, type ProjectApiResponse } from "@/lib/projectApi"
+import { mapProjectResponse, convertNormalizedProjectsToHeatmapValues, type ProjectApiResponse, type CountMap } from "@/lib/projectApi"
 import { type ProjectListItem } from "@/types/project"
 
 export default function Dashboard() {
   const { token, logout } = useAuth()
   const [projects, setProjects] = useState<ProjectListItem[]>([])
+  const [heatMap, setHeatMap] = useState<CountMap>()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -31,8 +32,10 @@ export default function Dashboard() {
           token,
           signal: controller.signal,
         })
-
-        setProjects(mapProjectResponse(response))
+        const project = mapProjectResponse(response)
+        const heatmapData = convertNormalizedProjectsToHeatmapValues(project)
+        setHeatMap(heatmapData)
+        setProjects(project)
       } catch (caughtError) {
         if (caughtError instanceof DOMException && caughtError.name === "AbortError") {
           return
@@ -89,7 +92,7 @@ export default function Dashboard() {
                 <ChartProject />
             </div>
             <div className="max-h-[50vh]">
-                <ActivityTable />
+                <ActivityTable data={heatMap}/>
             </div>
 
           </div>

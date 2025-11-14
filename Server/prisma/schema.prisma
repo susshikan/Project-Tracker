@@ -18,6 +18,7 @@ model User {
   id Int @id @default(autoincrement())
   name String @unique
   email String @unique
+  bio String?
   password String
   projects Project[] 
   commits Commit[]

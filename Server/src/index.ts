@@ -6,6 +6,7 @@ import passport from "passport";
 import userRouter from './routes/userRoutes';
 import authRouter from './routes/authRoutes';
 import projectRouter from './routes/projectRoutes';
+import commitRouter from './routes/commitRouter';
 import { setupJwt } from './config/passportJWT';
 
 const port = 3001;
@@ -20,7 +21,7 @@ setupJwt(passport)
 app.use('/api/auth', authRouter)
 app.use('/api/users', userRouter)
 app.use('/api/projects', projectRouter)
-
+app.use('/api/commits', commitRouter)
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
 });

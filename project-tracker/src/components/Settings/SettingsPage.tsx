@@ -7,7 +7,7 @@ export default function SettingsPage() {
             <div className="container max-w-4xl py-8 px-4 md:px-8">
                 <div className="space-y-8 ">
                     <ProfileSettings />
-                    <AppearanceSettings />
+                    
                 </div>
             </div>
       </main>

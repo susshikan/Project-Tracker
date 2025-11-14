@@ -1,19 +1,20 @@
-"use client"
-
 import type React from "react"
-
 import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useAuth } from "../auth/AuthContext"
+import { da } from "date-fns/locale"
 
 export function ProfileSettings() {
+  const { token, user } = useAuth()
+  console.log(user)
   const [formData, setFormData] = useState({
-    name: "John Doe",
-    email: "john@example.com",
-    bio: "Software developer and designer",
+    name: user.name,
+    email: user.email,
+    bio: user.bio || "Dont have bio",
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -21,8 +22,21 @@ export function ProfileSettings() {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSave = () => {
-    console.log("Saving profile:", formData)
+  const handleSave = async () => {
+    try {
+      const update = await fetch("http://localhost:3001/api/users/profile", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(formData)
+      })
+      const data = await update.json()
+      console.log(data)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (

@@ -26,6 +26,7 @@ type RegisterPayload = {
 
 type AuthContextValue = {
   token: string | null
+  user: any | null
   isAuthenticated: boolean
   isAuthenticating: boolean
   authError: string | null
@@ -57,10 +58,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(() => readInitialToken())
   const [isAuthenticating, setIsAuthenticating] = useState(false)
   const [authError, setAuthError] = useState<string | null>(null)
+  const [user, setUser] = useState(null)
 
   const fetchLoginToken = useCallback(
     async ({ email, password }: LoginCredentials) => {
-      const result = await apiFetch<{ message: string; token: string }>("/auth/login", {
+      const result = await apiFetch<{ message: string; token: string; user: any }>("/auth/login", {
         method: "POST",
         body: { email, password },
       })
@@ -69,7 +71,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw new Error("Token tidak ditemukan pada respons login")
       }
 
-      return result.token
+      return {
+        token: result.token,
+        user: result.user
+      }
     },
     [],
   )
@@ -92,7 +97,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     try {
       const tokenValue = await fetchLoginToken({ email, password })
-      setToken(tokenValue)
+      setToken(tokenValue.token)
+      setUser(tokenValue.user)
     } catch (error) {
       const message = "Login gagal"
 
@@ -115,7 +121,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         })
 
         const tokenValue = await fetchLoginToken({ email, password })
-        setToken(tokenValue)
+        setToken(tokenValue.token)
+        setUser(tokenValue.user)
       } catch (error) {
         const message = "Registrasi gagal"
 
@@ -136,6 +143,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const value = useMemo<AuthContextValue>(
     () => ({
       token,
+      user,
       isAuthenticated: Boolean(token),
       isAuthenticating,
       authError,

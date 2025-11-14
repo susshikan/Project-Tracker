@@ -42,5 +42,5 @@ export async function login( {email, password }: LoginDTO) {
     { expiresIn: "24h" }
   );
 
-  return { message: "Login berhasil", token };
+  return { message: "Login berhasil", token, user: user };
 }

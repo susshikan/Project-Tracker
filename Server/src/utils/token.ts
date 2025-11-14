@@ -4,7 +4,7 @@ export function generateToken(userId: any, email: any) {
   return jwt.sign(
     { sub: userId, email },
     process.env.JWT_SECRET || "supersecretjwt",
-    { expiresIn: "1h" }
+    { expiresIn: "24h" }
   );
 }
 

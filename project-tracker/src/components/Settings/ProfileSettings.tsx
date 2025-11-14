@@ -1,21 +1,30 @@
 import type React from "react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useAuth } from "../auth/AuthContext"
-import { da } from "date-fns/locale"
+import { apiFetch } from "@/lib/api"
 
 export function ProfileSettings() {
-  const { token, user } = useAuth()
-  console.log(user)
+  const { token, user, refreshUser } = useAuth()
   const [formData, setFormData] = useState({
-    name: user.name,
-    email: user.email,
-    bio: user.bio || "Dont have bio",
+    name: user?.name ?? "",
+    email: user?.email ?? "",
+    bio: user?.bio || "Dont have bio",
   })
+
+  useEffect(() => {
+    if (!user) return
+
+    setFormData({
+      name: user.name,
+      email: user.email,
+      bio: user.bio || "Dont have bio",
+    })
+  }, [user])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -24,16 +33,12 @@ export function ProfileSettings() {
 
   const handleSave = async () => {
     try {
-      const update = await fetch("http://localhost:3001/api/users/profile", {
+      await apiFetch("users/profile", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(formData)
+        token,
+        body: formData,
       })
-      const data = await update.json()
-      console.log(data)
+      await refreshUser()
     } catch (error) {
       console.log(error)
     }

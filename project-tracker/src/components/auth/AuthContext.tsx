@@ -33,6 +33,7 @@ type AuthContextValue = {
   login: (credentials: LoginCredentials) => Promise<void>
   register: (payload: RegisterPayload) => Promise<void>
   logout: () => void
+  refreshUser: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
@@ -59,6 +60,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticating, setIsAuthenticating] = useState(false)
   const [authError, setAuthError] = useState<string | null>(null)
   const [user, setUser] = useState(null)
+
+
+
+  const refreshUser = useCallback(async () => {
+    if (!token) return
+
+    try {
+      const result = await apiFetch("users/profile", {
+        method: "GET",
+        token, // apiFetch akan kirim Authorization: Bearer token
+      })
+      console.log(result.user)
+      setUser(result.user)
+    } catch (error) {
+      console.error("Gagal fetch user:", error)
+      setUser(null)
+    }
+  }, [token])
+
+  useEffect(() => {
+    if (token) {
+      refreshUser()
+    }
+  }, [refreshUser, token])
 
   const fetchLoginToken = useCallback(
     async ({ email, password }: LoginCredentials) => {
@@ -137,6 +162,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(() => {
     setToken(null)
+    setUser(null)
     setAuthError(null)
   }, [])
 
@@ -150,8 +176,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       login,
       register,
       logout,
+      refreshUser,
     }),
-    [authError, isAuthenticating, login, logout, register, token],
+    [authError, isAuthenticating, login, logout, refreshUser, register, token, user],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
@@ -165,3 +192,4 @@ export function useAuth() {
 
   return context
 }
+

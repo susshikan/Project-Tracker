@@ -33,6 +33,7 @@ export async function updateProfile(req: Request<{}, {}, updateProfileBody>, res
   if (!req.user) {
     return res.status(401).json({ message: "Unauthorized" });
   }
+  const key = `user:${reqUser.user.id}`
   const name = req.body.name
   const email = req.body.email
   const bio = req.body.bio
@@ -46,6 +47,9 @@ export async function updateProfile(req: Request<{}, {}, updateProfileBody>, res
   if (bio) {
     body.bio = bio
   }
+  if (!(name || email || bio)) {
+    return res.json({users: "nothing to update"})
+  }
   try {
     const update = await prisma.user.update({
       where: {
@@ -53,6 +57,10 @@ export async function updateProfile(req: Request<{}, {}, updateProfileBody>, res
       },
       data: body
     })
+    const data = {
+      users: update
+    }
+    await redis.set(key, JSON.stringify(data), 'EX', 120 )
     res.json({users: update})
   } catch (error) {
     console.log(error)

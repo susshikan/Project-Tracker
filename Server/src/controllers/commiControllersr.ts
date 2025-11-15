@@ -204,7 +204,7 @@ export async function updateCommit(req: Request<CommitByIdParams, {}, CommitUpda
   if (!message) {
     return res.status(400).json({ message: "message wajib diisi" });
   }
-
+  const key = `commit:${reqCommit.user.id}:${projectId}:${localId}`
   try {
     const existing = await prisma.commit.findFirst({
       where: {
@@ -219,12 +219,21 @@ export async function updateCommit(req: Request<CommitByIdParams, {}, CommitUpda
     }
 
     const updated = await prisma.commit.update({
-      where: { id: existing.id },
+      where: {
+        userId_projectLocalId_localId: {
+          userId: reqCommit.user.id,
+          projectLocalId: projectId,
+          localId: localId
+        }
+      },
       data: { message },
     });
-
+    await redis.set(key, JSON.stringify(updated), 'EX', 120)
     return res.json({ data: updated });
-  } catch (error) {
+  } catch (error: any) {
+    if (error.code === 'P2025') {
+      return res.json(404).json({message: 'Commit dengan id tersebut tidak ditemukan'})
+    }
     const messageError = error instanceof Error ? error.message : "Gagal memperbarui commit";
     return res.status(400).json({ message: messageError });
   }
@@ -247,24 +256,21 @@ export async function deleteCommit(req: Request<CommitByIdParams>, res: Response
   }
 
   try {
-    const existing = await prisma.commit.findFirst({
+    await prisma.commit.delete({
       where: {
-        localId,
-        projectLocalId: projectId,
-        userId: reqCommit.user.id,
+        userId_projectLocalId_localId: {
+          userId: reqCommit.user.id,
+          projectLocalId: projectId,
+          localId: localId
+        }
       },
     });
 
-    if (!existing) {
-      return res.status(404).json({ message: "Commit dengan id tersebut tidak ditemukan" });
-    }
-
-    await prisma.commit.delete({
-      where: { id: existing.id },
-    });
-
     return res.status(204).send();
-  } catch (error) {
+  } catch (error: any) {
+    if (error.code === 'P2025') {
+      return res.json(404).json({message: 'Commit dengan id tersebut tidak ditemukan'})
+    }
     const message = error instanceof Error ? error.message : "Gagal menghapus commit";
     return res.status(400).json({ message });
   }

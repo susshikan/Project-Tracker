@@ -50,4 +50,5 @@ model Commit {
   userId Int
   project Project @relation(fields: [userId, projectLocalId], references: [userId, localId], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([userId, projectLocalId, localId])
 }

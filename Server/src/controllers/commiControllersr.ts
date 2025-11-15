@@ -31,7 +31,7 @@ export async function getCommit(req: Request, res: Response) {
   try {
     const cached = await redis.get(key)
     if (cached) {
-      return res.json({data: JSON.parse(cached)})
+      return res.json({ data: JSON.parse(cached) })
     }
     const allCommit = await prisma.commit.findMany({
       where: {
@@ -65,7 +65,7 @@ export async function getCommitPerProject(req: Request<CommitParams, {}, {}>, re
   try {
     const cached = await redis.get(key)
     if (cached) {
-      return res.json({data: JSON.parse(cached)})
+      return res.json({ data: JSON.parse(cached) })
     }
     const allCommit = await prisma.commit.findMany({
       where: {
@@ -105,7 +105,7 @@ export async function createCommit(req: Request<CommitParams, {}, CommitBody>, r
   try {
     const project = await prisma.project.update({
       where: {
-        userId_localId: {userId: reqCommit.user.id, localId: projectId}
+        userId_localId: { userId: reqCommit.user.id, localId: projectId }
       },
       data: {
         totalCommit: {
@@ -133,8 +133,8 @@ export async function createCommit(req: Request<CommitParams, {}, CommitBody>, r
     });
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code  === 'P2025') {
-        res.status(404).json({message: "Project dengan id tersebut tidak ditemukan!"})
+      if (error.code === 'P2025') {
+        res.status(404).json({ message: "Project dengan id tersebut tidak ditemukan!" })
       }
     }
     const message = error instanceof Error ? error.message : "Gagal membuat commit";
@@ -161,7 +161,7 @@ export async function getCommitById(req: Request<CommitByIdParams>, res: Respons
   try {
     const cached = await redis.get(key)
     if (cached) {
-      return res.json({data: JSON.parse(cached)})
+      return res.json({ data: JSON.parse(cached) })
     }
     const commit = await prisma.commit.findFirst({
       where: {

@@ -178,24 +178,21 @@ export async function updateProject(req: Request<ProjectParam, {}, UpdateProject
     }
     const key = `project:${reqProject.user.id}:${paramId}`
     try {
-        const existing = await prisma.project.findFirst({
-            where: {
-                localId: paramId,
-                userId: reqProject.user.id
-            }
-        })
-
-        if (!existing) {
-            return res.status(404).json({ message: "Project dengan id tersebut tidak ditemukan" })
-        }
-
         const updated = await prisma.project.update({
-            where: { id: existing.id },
+            where: {
+                userId_localId: {
+                    userId: reqProject.user.id,
+                    localId: paramId
+                }
+            },
             data: updateData
         })
         await redis.set(key, JSON.stringify(updated), 'EX',120)
         return res.json({ data: updated })
-    } catch (error) {
+    } catch (error: any) {
+        if (error.code === 'P2025') {
+            return res.status(404).json({message: 'Project dengan id tersebut tidak ditemukan'})
+        }
         const message = error instanceof Error ? error.message : "Gagal memperbarui project"
         return res.status(400).json({ message })
     }
@@ -213,23 +210,20 @@ export async function deleteProject(req: Request<ProjectParam>, res: Response){
     }
 
     try {
-        const existing = await prisma.project.findFirst({
+        await prisma.project.delete({
             where: {
-                localId: paramId,
-                userId: reqProject.user.id
+                userId_localId: {
+                    userId: reqProject.user.id,
+                    localId: paramId
+                }
             }
         })
 
-        if (!existing) {
-            return res.status(404).json({ message: "Project dengan id tersebut tidak ditemukan" })
-        }
-
-        await prisma.project.delete({
-            where: { id: existing.id }
-        })
-
         return res.status(204).send()
-    } catch (error) {
+    } catch (error: any) {
+        if (error.code === 'P2025') {
+            return res.status(404).json({message: "Project dengan id tersebut tidak ditemukan"})
+        }
         const message = error instanceof Error ? error.message : "Gagal menghapus project"
         return res.status(400).json({ message })
     }

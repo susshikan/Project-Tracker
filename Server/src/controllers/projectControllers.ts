@@ -1,6 +1,7 @@
 import { UserRequest } from "../types/userType";
 import { PrismaClient } from '../../generated/prisma'
 import { Request, Response } from "express";
+import redis from "../utils/redis";
 
 const prisma = new PrismaClient();
 
@@ -27,6 +28,11 @@ export async function getProject(req: Request, res: Response){
     if (!reqProject.user) {
         return res.status(401).json({ message: "Unauthorized" })
     }
+    const key = `projects:${reqProject.user.id}`
+    const cached = await redis.get(key);
+    if (cached) {
+        return res.json({data: JSON.parse(cached)})
+    }
     let allProject
     try {
         allProject = await prisma.project.findMany({
@@ -40,8 +46,9 @@ export async function getProject(req: Request, res: Response){
                 createAt: 'desc'
             }
         })
+        await redis.set(key, JSON.stringify(allProject), "EX", 120);
     } catch (error) {
-        
+        console.log(error)
     }
     res.json({
         data: allProject
@@ -53,8 +60,14 @@ export async function getProjectById(req: Request<ProjectParam, {}, {}>, res: Re
     if (!reqProject.user) {
         return res.status(401).json({ message: "Unauthorized" })
     }
+    
     let project
     const paramId = Number(req.params?.id)
+    const key = `project:${reqProject.user.id}:${paramId}`
+    const cached = await redis.get(key)
+    if (cached) {
+        return res.json({data: JSON.parse(cached)})
+    }
     try {
         project = await prisma.project.findFirst({
             where: {
@@ -65,8 +78,9 @@ export async function getProjectById(req: Request<ProjectParam, {}, {}>, res: Re
                 commit: true
             }
         })
+        await redis.set(key, JSON.stringify(project), 'EX', 60)
     } catch (error) {
-        
+        console.log(error)
     }
     if (!project) throw new Error('Project dengan id tersebut tidak ditemukan')
     res.json({
@@ -162,7 +176,7 @@ export async function updateProject(req: Request<ProjectParam, {}, UpdateProject
     if (Object.keys(updateData).length === 0) {
         return res.status(400).json({ message: "Tidak ada data yang diperbarui" })
     }
-
+    const key = `project:${reqProject.user.id}:${paramId}`
     try {
         const existing = await prisma.project.findFirst({
             where: {
@@ -179,7 +193,7 @@ export async function updateProject(req: Request<ProjectParam, {}, UpdateProject
             where: { id: existing.id },
             data: updateData
         })
-
+        await redis.set(key, JSON.stringify(updated), 'EX',120)
         return res.json({ data: updated })
     } catch (error) {
         const message = error instanceof Error ? error.message : "Gagal memperbarui project"

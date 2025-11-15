@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { UserRequest } from "../types/userType";
 import { PrismaClient } from '../../generated/prisma'
+import redis from "../utils/redis";
 
 const prisma = new PrismaClient();
 

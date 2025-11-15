@@ -1,6 +1,7 @@
 import { UserRequest } from "../types/userType";
 import { PrismaClient, Prisma } from "../../generated/prisma";
 import { Request, Response } from "express";
+import redis from "../utils/redis";
 
 const prisma = new PrismaClient();
 
@@ -26,8 +27,12 @@ export async function getCommit(req: Request, res: Response) {
   if (!reqCommit.user) {
     return res.status(401).json({ message: "Unauthorized" });
   }
-
+  const key = `commit:${reqCommit.user.id}`
   try {
+    const cached = await redis.get(key)
+    if (cached) {
+      return res.json({data: JSON.parse(cached)})
+    }
     const allCommit = await prisma.commit.findMany({
       where: {
         userId: reqCommit.user.id,
@@ -36,7 +41,7 @@ export async function getCommit(req: Request, res: Response) {
         createAt: "desc",
       },
     });
-
+    await redis.set(key, JSON.stringify(allCommit), 'EX', 120)
     return res.json({
       data: allCommit ?? [],
     });
@@ -56,8 +61,12 @@ export async function getCommitPerProject(req: Request<CommitParams, {}, {}>, re
   if (Number.isNaN(projectId)) {
     return res.status(400).json({ message: "projectId harus berupa angka" });
   }
-
+  const key = `commit:${reqCommit.user.id}:${projectId}`
   try {
+    const cached = await redis.get(key)
+    if (cached) {
+      return res.json({data: JSON.parse(cached)})
+    }
     const allCommit = await prisma.commit.findMany({
       where: {
         userId: reqCommit.user.id,
@@ -67,7 +76,7 @@ export async function getCommitPerProject(req: Request<CommitParams, {}, {}>, re
         createAt: "desc",
       },
     });
-
+    await redis.set(key, JSON.stringify(allCommit), 'EX', 120)
     return res.json({
       data: allCommit ?? [],
     });
@@ -148,8 +157,12 @@ export async function getCommitById(req: Request<CommitByIdParams>, res: Respons
   if (Number.isNaN(projectId)) {
     return res.status(400).json({ message: "projectId harus berupa angka" });
   }
-
+  const key = `commit:${reqCommit.user.id}:${projectId}:${localId}`
   try {
+    const cached = await redis.get(key)
+    if (cached) {
+      return res.json({data: JSON.parse(cached)})
+    }
     const commit = await prisma.commit.findFirst({
       where: {
         localId,
@@ -161,7 +174,7 @@ export async function getCommitById(req: Request<CommitByIdParams>, res: Respons
     if (!commit) {
       return res.status(404).json({ message: "Commit dengan id tersebut tidak ditemukan" });
     }
-
+    await redis.set(key, JSON.stringify(commit), 'EX', 60)
     return res.json({
       data: commit,
     });

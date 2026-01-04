@@ -8,7 +8,7 @@ export default function HeroSection() {
     <ShaderBackground>
       <Header />
       <HeroContent />
-      <PulsingCircle />
+      
     </ShaderBackground>
   )
 }

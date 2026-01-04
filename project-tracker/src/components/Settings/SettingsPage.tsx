@@ -1,4 +1,3 @@
-import { AppearanceSettings } from "./AppearanceSettings";
 import { ProfileSettings } from "./ProfileSettings";
 
 export default function SettingsPage() {

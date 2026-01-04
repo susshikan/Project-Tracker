@@ -1,4 +1,4 @@
-import { Line, LineChart, XAxis } from "recharts"
+import { Line, LineChart } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { type ProjectListItem } from "@/types/project"

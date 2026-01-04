@@ -2,8 +2,7 @@
 
 import { Card } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { Badge } from "@/components/ui/badge"
-import { CheckCircle, Circle, Clock } from "lucide-react"
+import { Circle, Clock } from "lucide-react"
 
 const steps = [
   {

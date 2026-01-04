@@ -5,7 +5,7 @@ import { ProjectTable } from "./ProjectTable"
 import VerticalActivityStepper from "./VerticalActivityStepper"
 import { useAuth } from "../auth/AuthContext"
 import { apiFetch} from "@/lib/api"
-import { mapProjectResponse, convertNormalizedProjectsToHeatmapValues,convertProjectToCommit, type ProjectApiResponse, type CountMap, type CommitApiResponse } from "@/lib/projectApi"
+import { mapProjectResponse, convertNormalizedProjectsToHeatmapValues,convertProjectToCommit, type ProjectApiResponse, type CountMap } from "@/lib/projectApi"
 import { type ProjectListItem, type CommitsListItem } from "@/types/project"
 
 export default function Dashboard() {

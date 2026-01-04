@@ -48,9 +48,15 @@ const columns: ColumnDef<ProjectListItem>[] = [
     ),
   },
   {
-    accessorKey: "lastCommit",
+    id: "lastCommit",
     header: "Last Commit",
-    cell: ({ row }) => <span className="text-sm text-muted-foreground">{row.original.lastCommit}</span>,
+    cell: ({ row }) => {
+      const commits = row.original.commits
+      const lastCommit = commits.length > 0 
+        ? commits.reduce((a, b) => (a.createAt > b.createAt ? a : b)).createAt 
+        : "-"
+      return <span className="text-sm text-muted-foreground">{lastCommit}</span>
+    },
   },
   {
     accessorKey: "deadline",

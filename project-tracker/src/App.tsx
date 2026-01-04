@@ -8,6 +8,7 @@ import RegisterPage from "./components/auth/RegisterPage"
 import { AuthProvider } from "./components/auth/AuthContext"
 import ProtectedRoute from "./components/auth/ProtectedRoute"
 import ProjectPage from "./components/projectPage/ProjectPage"
+import HeroSection from "./components/hero/HeroSection"
 
 
 function App() {
@@ -22,20 +23,21 @@ function App() {
 
 function AppLayout() {
   const location = useLocation()
-  const hideNavbar = ["/login", "/register"].includes(location.pathname)
+  const hideNavbar = ["/login", "/register", "/hero", "/"].includes(location.pathname)
 
   return (
     <div className="min-h-screen">
       {!hideNavbar && <Navbar />}
       <Routes>
         <Route element={<ProtectedRoute />}>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/projects" element={<ProjectListPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/projects/:id" element={<ProjectPage />} />
         </Route>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/" element={<HeroSection />} />
       </Routes>
     </div>
   )

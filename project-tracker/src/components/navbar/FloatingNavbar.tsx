@@ -15,9 +15,9 @@ export default function FloatingNavbar() {
 
           {/* Navigation Links */}
           <Link
-            to={'/'}
+            to={'/dashboard'}
             className={`transition-colors ${
-              isActive("/") ? "text-white font-semibold" : "text-gray-400 hover:text-white"
+              isActive("/dashboard") ? "text-white font-semibold" : "text-gray-400 hover:text-white"
             }`}
           >
             Home

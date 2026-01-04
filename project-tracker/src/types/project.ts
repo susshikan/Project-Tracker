@@ -1,4 +1,3 @@
-import { description } from "@/components/dashboard/ChartProject"
 import { z } from "zod"
 
 const commitSchema = z.object({

@@ -5,8 +5,8 @@ import { EditProjectButton } from "./EditProjectButton"
 import { useEffect, useState, useCallback, useMemo } from "react"
 import { apiFetch } from "@/lib/api"
 import { useAuth } from "../auth/AuthContext"
-import type { CommitApiResponse, ProjectApiItem, ProjectApiResponse, ProjectApiResponseById } from "@/lib/projectApi"
-import { mapCommitsResponse, mapProjectResponseById, normalizeProject, normalizeProjectById } from "@/lib/projectApi"
+import type { ProjectApiResponseById } from "@/lib/projectApi"
+import { mapProjectResponseById } from "@/lib/projectApi"
 
 
 export default function ProjectPage(){
